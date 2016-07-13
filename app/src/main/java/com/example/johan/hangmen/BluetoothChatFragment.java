@@ -44,6 +44,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.johan.hangmen.common.logger.*;
+import com.example.johan.hangmen.services.XmppService;
 
 /**
  * This fragment controls Bluetooth to communicate with other devices.
@@ -59,6 +60,8 @@ public class BluetoothChatFragment extends Fragment {
 
     public boolean grabbed_left;
     public boolean grabbed_right;
+
+    public Msg message;
 
     int p=0;
 
@@ -100,6 +103,8 @@ public class BluetoothChatFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        message = new Msg(0,0,0,0);
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -321,6 +326,7 @@ public class BluetoothChatFragment extends Fragment {
                     // construct a string from the valid bytes in the buffer
                     int m =(int)readBuf[0];
                     parseMessage(m);
+                    sendMsg();
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     Log.e(TAG,readMessage);
@@ -350,34 +356,43 @@ public class BluetoothChatFragment extends Fragment {
         if (m>50){
             TrainAloneActivity.TVgrabbedLeft.setText(String.valueOf(m-50));
             grabbed_left=true;
+            message.setGrabbed_left(m-50);
             if(grabbed_right) time=System.currentTimeMillis();
             return;
         }
         if (m==50){
             TrainAloneActivity.TVgrabbedLeft.setText("0");
             p=0;
+            message.setGrabbed_left(0);
+            message.setPullups(0);
            grabbed_left=false;
-            if(grabbed_right)TrainAloneActivity.TVHangtime.setText(String.valueOf((System.currentTimeMillis()-time)));
+            if(grabbed_right){TrainAloneActivity.TVHangtime.setText(String.valueOf((System.currentTimeMillis()-time)));
+            message.setHangtime((System.currentTimeMillis()-time));}
             TrainAloneActivity.TVpullUps.setText("0");
             return;
         }
         if (m>40){
             TrainAloneActivity.TVgrabbedRight.setText(String.valueOf(m-40));
            grabbed_right=true;
+            message.setGrabbed_right(m-40);
             if(grabbed_right) time=System.currentTimeMillis();
             return;
         }
         if (m==40){
             TrainAloneActivity.TVgrabbedRight.setText("0");
             p=0;
+            message.setGrabbed_right(0);
+            message.setPullups(0);
             grabbed_right=false;
-            if(grabbed_left)TrainAloneActivity.TVHangtime.setText(String.valueOf((System.currentTimeMillis()-time)));
+            if(grabbed_left){TrainAloneActivity.TVHangtime.setText(String.valueOf((System.currentTimeMillis()-time)));
+            message.setHangtime((System.currentTimeMillis()-time));}
             TrainAloneActivity.TVpullUps.setText("0");
             return;
         }
         if(m>30){
 
            p++;
+            message.setPullups(p);
             TrainAloneActivity.TVpullUps.setText(String.valueOf(p));
             return;
         }
@@ -461,4 +476,8 @@ public class BluetoothChatFragment extends Fragment {
         return false;
     }
 
+
+ public void sendMsg(){
+     XmppService.sendMessage(this.getContext(),TrainTogetherActivity.getUser()+Util.SUFFIX_CHAT, org.jivesoftware.smack.packet.Message.Type.chat,message.toString());
+ }
 }

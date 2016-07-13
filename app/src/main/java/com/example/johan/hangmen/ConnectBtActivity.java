@@ -17,8 +17,8 @@ import android.widget.ViewAnimator;
  */
 public class ConnectBtActivity extends ActionBarActivity {
 
-    Button button_bt;
     Button button_train_alone;
+    Button button_train_together;
     public static TextView textView;
     private boolean mLogShown;
 
@@ -41,6 +41,15 @@ public class ConnectBtActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent myIntent=new Intent(ConnectBtActivity.this,TrainAloneActivity.class);
+                startActivity(myIntent);
+            }
+        });
+
+        button_train_together=(Button)findViewById(R.id.buttonTogether);
+        button_train_together.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent myIntent=new Intent(ConnectBtActivity.this,TrainTogetherActivity.class);
                 startActivity(myIntent);
             }
         });

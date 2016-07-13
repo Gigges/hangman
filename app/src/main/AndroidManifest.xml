@@ -32,6 +32,9 @@
         <activity android:name=".DeviceListActivity">
             </activity>
 
+        <activity android:name=".TrainTogetherActivity">
+        </activity>
+
         <activity android:name=".TrainAloneActivity"></activity>
 
     </application>

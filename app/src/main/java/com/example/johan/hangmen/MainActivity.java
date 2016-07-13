@@ -60,6 +60,7 @@ public class MainActivity extends ActionBarActivity {
 
         context = getApplicationContext();
 
+
         String user_name=getUserName(context);
         if(!user_name.isEmpty()){
 
