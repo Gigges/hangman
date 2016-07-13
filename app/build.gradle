@@ -17,10 +17,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/java/com/example/johan/hangmen/main'
-    }
 }
 
 dependencies {
@@ -31,6 +27,6 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.6'
     compile "com.android.support:gridlayout-v7:23.3.0"
     compile "com.android.support:cardview-v7:23.3.0"
+    compile "com.android.support:support-v4:23.3.0"
     compile files('libs/volley.jar')
-
 }
