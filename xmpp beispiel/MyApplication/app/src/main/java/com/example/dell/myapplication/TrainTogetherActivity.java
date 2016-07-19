@@ -1,4 +1,4 @@
-package com.example.johan.hangmen;
+package com.example.dell.myapplication;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,7 +15,7 @@ import android.widget.TextView;
 /**
  * Created by johan on 13.07.2016.
  */
-public class TrainTogetherActivity extends ActionBarActivity{
+public class TrainTogetherActivity extends ActionBarActivity {
 
     TextView TVpullUpsYou;
     TextView TVpullUpsOpp;

@@ -1,9 +1,9 @@
-package com.example.johan.hangmen;
+package com.example.dell.myapplication;
 
 /**
  * Created by johan on 13.07.2016.
  */
-public class Msg {
+public class OurMsg {
 
 
     public int pullups;
@@ -11,7 +11,7 @@ public class Msg {
     public int grabbed_left;
     public int grabbed_right;
 
-    public Msg(int pullups, long hangtime, int grabbed_left, int grabbed_right) {
+    public OurMsg(int pullups, long hangtime, int grabbed_left, int grabbed_right) {
         this.pullups = pullups;
         this.hangtime = hangtime;
         this.grabbed_left = grabbed_left;

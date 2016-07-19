@@ -65,7 +65,7 @@ public class MainActivity extends ActionBarActivity {
         String user_name=getUserName(context);
         if(!user_name.isEmpty()){
 
-            Intent chatActivity=new Intent(MainActivity.this,ConnectBtActivity.class);
+            Intent chatActivity=new Intent(MainActivity.this,ChatActivity.class);
             chatActivity.putExtra("user_id",user_name);
             startActivity(chatActivity);
 

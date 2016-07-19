@@ -68,7 +68,7 @@ public class MainActivity extends ActionBarActivity {
         String user_name=getUserName(context);
         if(!user_name.isEmpty()){
 
-            Intent chatActivity=new Intent(MainActivity.this,ChatActivity.class);
+            Intent chatActivity=new Intent(MainActivity.this,ConnectBtActivity.class);
             chatActivity.putExtra("user_id",user_name);
             startActivity(chatActivity);
 
@@ -453,7 +453,7 @@ public class MainActivity extends ActionBarActivity {
             if (result != null) {
 
                 storeUserDetails(context);
-                Intent chatActivity=new Intent(MainActivity.this,ChatActivity.class);
+                Intent chatActivity=new Intent(MainActivity.this,ConnectBtActivity.class);
                 chatActivity.putExtra("user_id",editText_user_name.getText().toString());
                 startActivity(chatActivity);
 

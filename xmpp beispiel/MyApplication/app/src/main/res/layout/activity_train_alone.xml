@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Grabbed Left"
+        android:id="@+id/textView2"
+        android:layout_marginTop="103dp"
+        android:layout_marginStart="44dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/textView_grabbed_left"
+        android:layout_marginTop="40dp"
+        android:textSize="50dp"
+        android:layout_below="@+id/textView2"
+        android:layout_alignStart="@+id/textView2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Grabbed Right"
+        android:id="@+id/textView3"
+        android:textSize="20dp"
+        android:layout_marginEnd="42dp"
+        android:layout_above="@+id/textView_grabbed_left"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/textView_grabbed_right"
+        android:textSize="50dp"
+        android:layout_alignTop="@+id/textView_grabbed_left"
+        android:layout_alignStart="@+id/textView3" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Number of Pull-ups"
+        android:id="@+id/textView4"
+        android:textSize="20dp"
+        android:layout_marginBottom="112dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/textView5"
+        android:layout_below="@+id/textView4"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp"
+        android:textIsSelectable="false"
+        android:textSize="50dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hang time in ms"
+        android:id="@+id/textView_ha"
+        android:textSize="20dp"
+        android:layout_alignTop="@+id/textView4"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/textView_pull_ups"
+        android:textSize="50dp"
+        android:layout_below="@+id/textView_ha"
+        android:layout_toEndOf="@+id/textView_grabbed_left" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/textView_hangtime"
+        android:textSize="50dp"
+        android:layout_alignTop="@+id/textView_pull_ups"
+        android:layout_alignStart="@+id/textView_ha" />
+
+</RelativeLayout>

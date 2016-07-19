@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.johan.hangmen;
+package com.example.dell.myapplication;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -42,9 +42,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.johan.hangmen.common.logger.Log;
+import com.example.dell.myapplication.common.logger.Log;
 
 import services.XmppService;
+
 /**
  * This fragment controls Bluetooth to communicate with other devices.
  */
@@ -356,7 +357,7 @@ public class BluetoothChatFragment extends Fragment {
             TrainAloneActivity.TVgrabbedLeft.setText(String.valueOf(m-50));
             grabbed_left=true;
             message.setGrabbed_left(m-50);
-            if(grabbed_right) time=System.currentTimeMillis();
+            if(grabbed_right) time= System.currentTimeMillis();
             return;
         }
         if (m==50){
@@ -374,7 +375,7 @@ public class BluetoothChatFragment extends Fragment {
             TrainAloneActivity.TVgrabbedRight.setText(String.valueOf(m-40));
            grabbed_right=true;
             message.setGrabbed_right(m-40);
-            if(grabbed_right) time=System.currentTimeMillis();
+            if(grabbed_right) time= System.currentTimeMillis();
             return;
         }
         if (m==40){
