@@ -15,7 +15,6 @@
  */
 
 package com.example.johan.hangmen;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -43,9 +42,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.johan.hangmen.common.logger.*;
-import com.example.johan.hangmen.services.XmppService;
+import com.example.johan.hangmen.common.logger.Log;
 
+import services.XmppService;
 /**
  * This fragment controls Bluetooth to communicate with other devices.
  */

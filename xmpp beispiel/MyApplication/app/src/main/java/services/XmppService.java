@@ -1,10 +1,15 @@
-package com.example.johan.hangmen.services;
+package services;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.AvoidXfermode.Mode;
+
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -16,27 +21,35 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.johan.hangmen.Util;
+
+import com.example.dell.myapplication.Util;
 
 import org.jivesoftware.smack.AndroidConnectionConfiguration;
 import org.jivesoftware.smack.Chat;
+
+import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
+import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.SmackAndroid;
 import org.jivesoftware.smack.SmackConfiguration;
+
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.PrivacyProvider;
 import org.jivesoftware.smack.provider.ProviderManager;
+
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.GroupChatInvitation;
@@ -44,7 +57,10 @@ import org.jivesoftware.smackx.PrivateDataManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.bytestreams.socks5.provider.BytestreamsProvider;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
+import org.jivesoftware.smackx.muc.InvitationListener;
+import org.jivesoftware.smackx.muc.InvitationRejectionListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.packet.ChatStateExtension;
 import org.jivesoftware.smackx.packet.LastActivity;
 import org.jivesoftware.smackx.packet.OfflineMessageInfo;
@@ -70,9 +86,14 @@ import org.jivesoftware.smackx.pubsub.packet.PubSubNamespace;
 import org.jivesoftware.smackx.pubsub.provider.SubscriptionProvider;
 import org.jivesoftware.smackx.search.UserSearch;
 
+
+
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 

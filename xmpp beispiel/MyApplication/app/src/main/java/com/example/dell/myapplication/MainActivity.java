@@ -1,5 +1,6 @@
-package com.example.johan.hangmen;
+package com.example.dell.myapplication;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,23 +8,27 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.UiThread;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.squareup.okhttp.OkHttpClient;
+
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,13 +38,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Created by johan on 06.07.2016.
- */
+
+
 public class MainActivity extends ActionBarActivity {
 
-    EditText editText_user_name;
-    EditText editText_email;
+    TextView editText_user_name;
+    TextView editText_email;
     Button button_login;
 
 
@@ -57,15 +61,14 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_main);
 
         context = getApplicationContext();
-
 
         String user_name=getUserName(context);
         if(!user_name.isEmpty()){
 
-            Intent chatActivity=new Intent(MainActivity.this,ConnectBtActivity.class);
+            Intent chatActivity=new Intent(MainActivity.this,ChatActivity.class);
             chatActivity.putExtra("user_id",user_name);
             startActivity(chatActivity);
 
@@ -73,9 +76,9 @@ public class MainActivity extends ActionBarActivity {
 
         }else {
 
-            editText_user_name = (EditText) findViewById(R.id.editText_user_name);
-            editText_email = (EditText) findViewById(R.id.editText_email);
-            button_login = (Button) findViewById(R.id.button_signin);
+            editText_user_name = (TextView) findViewById(R.id.editText_user_name);
+            editText_email = (TextView) findViewById(R.id.editText_email);
+            button_login = (Button) findViewById(R.id.button_login);
 
             button_login.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -112,7 +115,7 @@ public class MainActivity extends ActionBarActivity {
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
                 GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                        com.example.johan.hangmen.Util.PLAY_SERVICES_RESOLUTION_REQUEST).show();
+                        Util.PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
                 Log.i(TAG, "This device is not supported.");
                 finish();
@@ -124,7 +127,7 @@ public class MainActivity extends ActionBarActivity {
 
     private String getRegistrationId(Context context) {
         final SharedPreferences prefs = getGCMPreferences(context);
-        String registrationId = prefs.getString(com.example.johan.hangmen.Util.PROPERTY_REG_ID, "");
+        String registrationId = prefs.getString(Util.PROPERTY_REG_ID, "");
         if (registrationId.isEmpty()) {
             Log.i(TAG, "Registration not found.");
             return "";
@@ -132,7 +135,7 @@ public class MainActivity extends ActionBarActivity {
         // Check if app was updated; if so, it must clear the registration ID
         // since the existing registration ID is not guaranteed to work with
         // the new app version.
-        int registeredVersion = prefs.getInt(com.example.johan.hangmen.Util.PROPERTY_APP_VERSION, Integer.MIN_VALUE);
+        int registeredVersion = prefs.getInt(Util.PROPERTY_APP_VERSION, Integer.MIN_VALUE);
         int currentVersion = getAppVersion(context);
         if (registeredVersion != currentVersion) {
             Log.i(TAG, "App version changed.");
@@ -145,9 +148,9 @@ public class MainActivity extends ActionBarActivity {
 
     private String getUserName(Context context) {
         final SharedPreferences prefs = getGCMPreferences(context);
-        String User_name = prefs.getString(com.example.johan.hangmen.Util.USER_NAME, "");
+        String User_name = prefs.getString(Util.USER_NAME, "");
         Log.d("pavan","username in main "+User_name);
-        return User_name;
+         return User_name;
 
     }
 
@@ -175,12 +178,6 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-    }
-
 
 
 
@@ -204,7 +201,7 @@ public class MainActivity extends ActionBarActivity {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(MainActivity.this);
                     }
-                    regid = gcm.register(com.example.johan.hangmen.Util.SENDER_ID);
+                    regid = gcm.register(Util.SENDER_ID);
                     msg = "Device registered, registration ID=" + regid;
 
 
@@ -213,14 +210,14 @@ public class MainActivity extends ActionBarActivity {
                     //GoogleCloudMessaging gcm;/ so it can use GCM/HTTP or CCS to send messages to your app.
                     // The request to your server should be authenticated if your app
                     // is using accounts.
-                    // sendRegistrationIdToBackend();
+                   // sendRegistrationIdToBackend();
 
                     // For this demo: we don't need to send it because the device
                     // will send upstream messages to a server that echo back the
                     // message using the 'from' address in the message.
 
                     // Persist the registration ID - no need to register again.
-                   // storeRegistrationId(context, regid);
+                    storeRegistrationId(context, regid);
                 } catch (IOException ex) {
                     msg = "Error :" + ex.getMessage();
                     // If there is an error, don't just keep trying to register.
@@ -253,8 +250,8 @@ public class MainActivity extends ActionBarActivity {
         int appVersion = getAppVersion(context);
         Log.i(TAG, "Saving regId on app version " + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(com.example.johan.hangmen.Util.PROPERTY_REG_ID, regId);
-        editor.putInt(com.example.johan.hangmen.Util.PROPERTY_APP_VERSION, appVersion);
+        editor.putString(Util.PROPERTY_REG_ID, regId);
+        editor.putInt(Util.PROPERTY_APP_VERSION, appVersion);
         editor.commit();
     }
 
@@ -263,8 +260,8 @@ public class MainActivity extends ActionBarActivity {
         int appVersion = getAppVersion(context);
         Log.i(TAG, "Saving regId on app version " + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(com.example.johan.hangmen.Util.EMAIL, editText_email.getText().toString());
-        editor.putString(com.example.johan.hangmen.Util.USER_NAME, editText_user_name.getText().toString());
+        editor.putString(Util.EMAIL, editText_email.getText().toString());
+        editor.putString(Util.USER_NAME, editText_user_name.getText().toString());
         editor.commit();
     }
 
@@ -276,17 +273,18 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
+    private RequestQueue mRequestQueue;
     private void sendRegistrationIdToBackend() {
         // Your implementation here.
-        RequestQueue mRequestQueue = Volley.newRequestQueue(MainActivity.this);
-        Log.d("pavan","gcm id "+regid);
-        // Toast.makeText(context,"in volley "+regid,Toast.LENGTH_LONG).show();
+        mRequestQueue = Volley.newRequestQueue(MainActivity.this);
+       Log.d("pavan","gcm id "+regid);
+       // Toast.makeText(context,"in volley "+regid,Toast.LENGTH_LONG).show();
 
-        Log.d(TAG,"here?");
-        new smppLogin().execute();
+
+       new smppLogin().execute();
 
 // Access the RequestQueue through your singleton class.
-        // AppController.getInstance().addToRequestQueue(jsObjRequest, "jsonRequest");
+       // AppController.getInstance().addToRequestQueue(jsObjRequest, "jsonRequest");
 
     }
 
@@ -302,11 +300,10 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
-
         protected String doInBackground(String... params) {
             // TODO Auto-generated method stub
 
-            String url = com.example.johan.hangmen.Util.register_url+"?name="+editText_user_name.getText().toString()+"&email="+editText_email.getText().toString()+"&regId="+regid;
+            String url = Util.register_url+"?name="+editText_user_name.getText().toString()+"&email="+editText_email.getText().toString()+"&regId="+regid;
             Log.i("pavan", "url" + url);
 
             OkHttpClient client_for_getMyFriends = new OkHttpClient();;
@@ -345,7 +342,7 @@ public class MainActivity extends ActionBarActivity {
                 if (result.equals("success")) {
 
                     storeUserDetails(context);
-                    startActivity(new Intent(MainActivity.this, ConnectBtActivity.class));
+                    startActivity(new Intent(MainActivity.this, ChatActivity.class));
                     finish();
 
                 } else {
@@ -408,11 +405,11 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected String doInBackground(String... arg0) {
-            Log.d(TAG,"done?");
-            String VerifyUserURL = "http://"+ com.example.johan.hangmen.Util.SERVER+":9090/plugins/userService/userservice?type=add&secret="+ com.example.johan.hangmen.Util.XMPP_SECREAT_KEY+"&"
+
+            String VerifyUserURL = "http://"+Util.SERVER+":9090/plugins/userService/userservice?type=add&secret="+Util.XMPP_SECREAT_KEY+"&"
                     + "username="
                     +editText_user_name.getText().toString()
-                    + "&password="+ com.example.johan.hangmen.Util.XMPP_PASSWORD+"&name="
+                    + "&password="+Util.XMPP_PASSWORD+"&name="
                     + editText_user_name.getText().toString()
                     + "&email="
                     + editText_email.getText().toString() ;
@@ -456,7 +453,7 @@ public class MainActivity extends ActionBarActivity {
             if (result != null) {
 
                 storeUserDetails(context);
-                Intent chatActivity=new Intent(MainActivity.this, ConnectBtActivity.class);
+                Intent chatActivity=new Intent(MainActivity.this,ChatActivity.class);
                 chatActivity.putExtra("user_id",editText_user_name.getText().toString());
                 startActivity(chatActivity);
 
@@ -471,5 +468,3 @@ public class MainActivity extends ActionBarActivity {
 
 
 }
-
-

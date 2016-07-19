@@ -1,21 +1,18 @@
 package com.example.johan.hangmen;
 
-import android.bluetooth.BluetoothAdapter;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.ViewAnimator;
+import android.widget.EditText;
+import android.widget.ListView;
 
-import  com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.OkHttpClient;
+
+import org.jivesoftware.smack.packet.Message;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,83 +20,84 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import services.XmppService;
 
 
+public class ChatActivity extends Activity {
 
-/**
- * Created by johan on 06.07.2016.
- */
-public class ConnectBtActivity extends ActionBarActivity {
+    EditText editText_mail_id;
+    EditText editText_chat_message;
+    ListView listView_chat_messages;
+    Button button_send_chat;
+    List<ChatObject> chat_list;
 
-    Button button_train_alone;
-    Button button_train_together;
-    public static TextView textView;
-    private boolean mLogShown;
     BroadcastReceiver recieve_chat;
 
-    BluetoothAdapter mBluetoothAdapter = null;
-    private BluetoothChatService mChatService = null;
-
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bt_connection);
+        setContentView(R.layout.activity_chat);
 
-        //connect to XMPP server
+
         Log.d("pavan","in chat "+getIntent().getStringExtra("user_id"));
         Log.d("pavan","in chat server "+Util.SERVER);
-        XmppService.setupAndConnect(ConnectBtActivity.this,Util.SERVER,"",getIntent().getStringExtra("user_id"),Util.XMPP_PASSWORD);
+        XmppService.setupAndConnect(ChatActivity.this, Util.SERVER, "",
+                getIntent().getStringExtra("user_id"), Util.XMPP_PASSWORD);
+        Log.d("pavan", String.valueOf(XmppService.isConnected()));
 
-
-        if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            BluetoothChatFragment fragment = new BluetoothChatFragment();
-            transaction.replace(R.id.sample_content_fragment, fragment);
-            transaction.commit();
-        }
-
-        textView = (TextView) findViewById(R.id.textView);
-        button_train_alone =(Button) findViewById(R.id.button_train_alone);
-        button_train_alone.setOnClickListener(new View.OnClickListener() {
+        editText_mail_id= (EditText) findViewById(R.id.editText_mail_id);
+        editText_chat_message= (EditText) findViewById(R.id.editText_chat_message);
+        listView_chat_messages= (ListView) findViewById(R.id.listView_chat_messages);
+        button_send_chat= (Button) findViewById(R.id.button_send_chat);
+        button_send_chat.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent myIntent=new Intent(ConnectBtActivity.this,TrainAloneActivity.class);
-                startActivity(myIntent);
+             public void onClick(View v) {
+
+            // send chat message to server
+                String message=editText_chat_message.getText().toString();
+
+                showChat("sent",message);
+
+              //  new SendMessage().execute();
+
+                XmppService.sendMessage(ChatActivity.this, editText_mail_id.getText().toString() + Util.SUFFIX_CHAT, Message.Type.chat, message);
+                editText_chat_message.setText("");
+
+
             }
         });
 
-        button_train_together=(Button)findViewById(R.id.buttonTogether);
-        button_train_together.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent myIntent=new Intent(ConnectBtActivity.this,TrainTogetherActivity.class);
-                startActivity(myIntent);
-            }
-        });
+
+
+
+
 
     }
+
+    private void showChat(String type, String message){
+
+        if(chat_list==null || chat_list.size()==0){
+
+            chat_list= new ArrayList<ChatObject>();
+        }
+
+        chat_list.add(new ChatObject(message,type));
+
+        ChatAdabter chatAdabter=new ChatAdabter(ChatActivity.this,R.layout.chat_view,chat_list);
+
+        listView_chat_messages.setAdapter(chatAdabter);
+        //chatAdabter.notifyDataSetChanged();
+
+    }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem logToggle = menu.findItem(R.id.menu_toggle_log);
-        logToggle.setVisible(findViewById(R.id.sample_output) instanceof ViewAnimator);
-        logToggle.setTitle(mLogShown ? "Hide Log" : "show log");
-
-        return super.onPrepareOptionsMenu(menu);
     }
 
     private class SendMessage extends AsyncTask<String, Void, String> {
@@ -115,7 +113,8 @@ public class ConnectBtActivity extends ActionBarActivity {
         @Override
         protected String doInBackground(String... params) {
             // TODO Auto-generated method stub
-            String url = Util.send_chat_url+"?email_id="+"klaus"+"&message="+"hi";
+
+            String url = Util.send_chat_url+"?email_id="+editText_mail_id.getText().toString()+"&message="+editText_chat_message.getText().toString();
             Log.i("pavan", "url" + url);
 
             OkHttpClient client_for_getMyFriends = new OkHttpClient();;
@@ -186,5 +185,9 @@ public class ConnectBtActivity extends ActionBarActivity {
         return out.toByteArray();
     }
 
-    }
 
+
+
+
+
+}

@@ -11,8 +11,6 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.johan.hangmen.services.XmppService;
-
 
 /**
  * Created by johan on 13.07.2016.
@@ -52,7 +50,7 @@ public class TrainTogetherActivity extends ActionBarActivity{
 
         ETuser=(EditText)findViewById(R.id.editTextOpp);
 
-        XmppService.setupAndConnect(TrainTogetherActivity.this,Util.SERVER,"",getIntent().getStringExtra("user_id"),Util.XMPP_PASSWORD);
+
 
         recieve_chat=new BroadcastReceiver() {
             @Override

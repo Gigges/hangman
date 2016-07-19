@@ -1,4 +1,4 @@
-package com.example.johan.hangmen;
+package com.example.dell.myapplication;
 
 /**
  * Created by Dell on 3/19/2015.
@@ -27,7 +27,5 @@ public class Util {
 
     public static final String SUFFIX_CHAT = "@" + DOMAIN;
     public static final String SUFFIX_CHAT_GROUP = "@conference." + DOMAIN;
-
-
 
 }
