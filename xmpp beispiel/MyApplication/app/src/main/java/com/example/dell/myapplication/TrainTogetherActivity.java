@@ -71,7 +71,7 @@ public class TrainTogetherActivity extends BoardActivity {
                 String message=intent.getStringExtra("message");
 
                 Log.d("pavan","in local braod "+message);
-               processMessage(message);
+               ProcessAndDisplayMessage(message);
 
 
             }
@@ -175,7 +175,7 @@ public class TrainTogetherActivity extends BoardActivity {
     }
 
 
-    private void processMessage(String message) {
+    private void ProcessAndDisplayMessage(String message) {
         String s = message.substring(1, message.length()-1);
         String[] array = s.split(",");
         TVpullUpsOpp.setText(Integer.valueOf(array[0]));
