@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:padding="5dp"
+        android:src="@drawable/hangboard_crop"
+        android:layout_gravity="left" />
+
+    <ImageView
+        android:id="@+id/highlight_right"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/shape_oval"
+        android:layout_alignTop="@id/imageView"
+        android:layout_alignLeft="@id/imageView"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/highlight_left"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/shape_oval"
+        android:layout_alignTop="@id/imageView"
+        android:layout_alignLeft="@id/imageView"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/highlight_pullup"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/shape_pullup"
+        android:visibility="invisible"
+        android:layout_alignBottom="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="37dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0.0s"
+        android:id="@+id/textView_hangtime"
+        android:textSize="60dp"
+        android:layout_below="@+id/imageView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/textView_pullups"
+        android:textSize="60dp"
+        android:layout_below="@+id/imageView"
+        android:layout_toLeftOf="@+id/highlight_pullup"
+        android:layout_toStartOf="@+id/highlight_pullup" />
+</RelativeLayout>
