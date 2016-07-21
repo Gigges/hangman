@@ -6,16 +6,20 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.packet.Message;
+
+import services.XmppService;
 
 
 /**
  * Created by johan on 13.07.2016.
  */
-public class TrainTogetherActivity extends ActionBarActivity {
+public class TrainTogetherActivity extends BoardActivity {
 
     TextView TVpullUpsYou;
     TextView TVpullUpsOpp;
@@ -27,12 +31,19 @@ public class TrainTogetherActivity extends ActionBarActivity {
     TextView TVhantimeOpp;
    public static EditText ETuser;
     OurMsg message;
+    Connection connection;
+
 
     BroadcastReceiver recieve_chat;
 
 
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ConnectBtActivity.bluetoothChatFragment.setReceiver(this);
+
+        connection = XmppService.getConnection();
+
 
         setContentView(R.layout.activity_train_together);
 
@@ -50,6 +61,7 @@ public class TrainTogetherActivity extends ActionBarActivity {
 
         ETuser=(EditText)findViewById(R.id.editTextOpp);
 
+        message= new OurMsg(0,0,0,0);
 
 
         recieve_chat=new BroadcastReceiver() {
@@ -71,6 +83,97 @@ public class TrainTogetherActivity extends ActionBarActivity {
 
 
     }
+
+    @Override
+    public void clearView() {
+
+    }
+
+    @Override
+    public void onHangtimeChange() {
+        long hangtime = super.getHangtime();
+        XmppService.sendMessage(TrainTogetherActivity.this,ETuser.getText()+Util.SUFFIX_CHAT, Message.Type.chat,message.toString());
+        TVhangtimeYou.setText(String.valueOf((float) (hangtime / 100) / 10) + "s");
+    }
+
+    @Override
+    public void setHanging(boolean val) {
+        if (val && isRightGrabbed() && isLeftGrabbed()) {
+            super.hanging = true;
+            setHangtime(0);
+            startHangtime();
+        } else {
+            super.hanging = false;
+            stopHangtime();
+        }
+
+    }
+
+    @Override
+    public void setPullup(boolean val) {
+
+    }
+
+    @Override
+    public void setRightGrabbed(boolean grab) {
+        rightGrabbed = grab;
+    }
+
+    @Override
+    public void setLeftGrabbed(boolean grab) {
+         leftGrabbed = grab;
+    }
+
+    @Override
+    public void setRightGrab(int hold) {
+        rightGrab = hold;
+        message.setGrabbed_right(hold);
+        TVGRYou.setText(String.valueOf(hold));
+    }
+
+    @Override
+    public void setLeftGrab(int hold) {
+        leftGrab = hold;
+        message.setGrabbed_left(hold);
+        TVGLYou.setText(String.valueOf(hold));
+    }
+
+    @Override
+    public void setRightFinger(int finger) {
+
+    }
+
+    @Override
+    public void setLeftFinger(int finger) {
+
+    }
+
+    @Override
+    public void setPullups(int pulls) {
+        pullups = pulls;
+        message.setPullups(pulls);
+        TVpullUpsYou.setText(String.valueOf(pulls));
+    }
+
+    @Override
+    public void setHangtime(long time) {
+        hangtime = time;
+        message.setHangtime(hangtime);
+        TVhangtimeYou.setText(String.valueOf((float) (super.getHangtime() / 100) / 10) + "s");
+    }
+
+    @Override
+    public void stepPullUps() {
+        if (!hanging) {
+            return;
+        }
+        if (incPullUps) {
+            setPullups(pullups + 1);
+        } else {
+            setPullups(pullups - 1);
+        }
+    }
+
 
     private void processMessage(String message) {
         String s = message.substring(1, message.length()-1);
