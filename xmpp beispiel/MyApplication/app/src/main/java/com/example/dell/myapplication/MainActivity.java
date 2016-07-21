@@ -175,6 +175,16 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
 
+        if (id == R.id.action_offline) {
+
+            ConnectBtActivity.OFFLINE = true;
+
+            Intent chatActivity=new Intent(MainActivity.this,ConnectBtActivity.class);
+            chatActivity.putExtra("user_id",editText_user_name.getText().toString());
+            startActivity(chatActivity);
+
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

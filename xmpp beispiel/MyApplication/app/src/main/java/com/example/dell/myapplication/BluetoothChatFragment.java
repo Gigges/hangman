@@ -58,6 +58,8 @@ public class BluetoothChatFragment extends Fragment {
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
 
+    private BoardActivity receiver;
+
     public boolean grabbed_left;
     public boolean grabbed_right;
 
@@ -97,6 +99,10 @@ public class BluetoothChatFragment extends Fragment {
      * Member object for the chat services
      */
     private BluetoothChatService mChatService = null;
+
+    public void setReceiver(BoardActivity receiver) {
+        this.receiver = receiver;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -300,6 +306,7 @@ public class BluetoothChatFragment extends Fragment {
                         case BluetoothChatService.STATE_CONNECTED:
                             ConnectBtActivity.textView.setTextColor(Color.GREEN);
                             ConnectBtActivity.textView.setText("Board connected");
+                            ConnectBtActivity.btconnected = true;
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
                             mConversationArrayAdapter.clear();
                             break;
@@ -311,6 +318,7 @@ public class BluetoothChatFragment extends Fragment {
                             setStatus(R.string.title_not_connected);
                             ConnectBtActivity.textView.setTextColor(Color.RED);
                             ConnectBtActivity.textView.setText("No Board connected");
+                            ConnectBtActivity.btconnected = false;
                             break;
                     }
                     break;
@@ -324,8 +332,10 @@ public class BluetoothChatFragment extends Fragment {
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
+                    if (receiver != null) {
+                        receiver.decodeMsg(readBuf);
+                    }
                     int m =(int)readBuf[0];
-                    parseMessage(m);
                     sendMsg();
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
@@ -348,58 +358,6 @@ public class BluetoothChatFragment extends Fragment {
             }
         }
     };
-
-    private void parseMessage(int m) {
-
-        if (TrainAloneActivity.TVpullUps ==null)return;
-
-        if (m>50){
-            TrainAloneActivity.TVgrabbedLeft.setText(String.valueOf(m-50));
-            grabbed_left=true;
-            message.setGrabbed_left(m-50);
-            if(grabbed_right) time= System.currentTimeMillis();
-            return;
-        }
-        if (m==50){
-            TrainAloneActivity.TVgrabbedLeft.setText("0");
-            p=0;
-            message.setGrabbed_left(0);
-            message.setPullups(0);
-           grabbed_left=false;
-            if(grabbed_right){TrainAloneActivity.TVHangtime.setText(String.valueOf((System.currentTimeMillis()-time)));
-            message.setHangtime((System.currentTimeMillis()-time));}
-            TrainAloneActivity.TVpullUps.setText("0");
-            return;
-        }
-        if (m>40){
-            TrainAloneActivity.TVgrabbedRight.setText(String.valueOf(m-40));
-           grabbed_right=true;
-            message.setGrabbed_right(m-40);
-            if(grabbed_right) time= System.currentTimeMillis();
-            return;
-        }
-        if (m==40){
-            TrainAloneActivity.TVgrabbedRight.setText("0");
-            p=0;
-            message.setGrabbed_right(0);
-            message.setPullups(0);
-            grabbed_right=false;
-            if(grabbed_left){TrainAloneActivity.TVHangtime.setText(String.valueOf((System.currentTimeMillis()-time)));
-            message.setHangtime((System.currentTimeMillis()-time));}
-            TrainAloneActivity.TVpullUps.setText("0");
-            return;
-        }
-        if(m>30){
-
-           p++;
-            message.setPullups(p);
-            TrainAloneActivity.TVpullUps.setText(String.valueOf(p));
-            return;
-        }
-
-    }
-
-
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -478,6 +436,8 @@ public class BluetoothChatFragment extends Fragment {
 
 
  public void sendMsg(){
-     XmppService.sendMessage(this.getContext(),TrainTogetherActivity.getUser()+Util.SUFFIX_CHAT, org.jivesoftware.smack.packet.Message.Type.chat,message.toString());
- }
+     if (!ConnectBtActivity.OFFLINE) {
+         XmppService.sendMessage(this.getContext(),TrainTogetherActivity.getUser()+Util.SUFFIX_CHAT, org.jivesoftware.smack.packet.Message.Type.chat,message.toString());
+     }
+   }
 }

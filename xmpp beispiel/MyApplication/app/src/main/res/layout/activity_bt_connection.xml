@@ -13,8 +13,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Train alone"
-        android:id="@+id/button_train_alone"
+        android:text="TextInterface"
+        android:id="@+id/button_textInterface"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
@@ -46,6 +46,22 @@
         android:layout_height="wrap_content"
         android:text="Connect with a Friend"
         android:id="@+id/buttonTogether"
-        android:layout_below="@+id/button_train_alone"
+        android:layout_below="@+id/button_training"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GraphicalInterface"
+        android:id="@+id/button_graphInterface"
+        android:layout_below="@+id/button_textInterface"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Training Alone"
+        android:id="@+id/button_training"
+        android:layout_below="@+id/button_graphInterface"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

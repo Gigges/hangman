@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewAnimator;
 
 import com.squareup.okhttp.OkHttpClient;
@@ -32,11 +33,19 @@ import services.XmppService;
  */
 public class ConnectBtActivity extends ActionBarActivity {
 
-    Button button_train_alone;
+    public static Boolean OFFLINE = false;
+
+    static BluetoothChatFragment bluetoothChatFragment = null;
+
+    Button button_textInterface;
+    Button button_graphInterface;
     Button button_train_together;
+    Button button_training;
     public static TextView textView;
     private boolean mLogShown;
     BroadcastReceiver recieve_chat;
+
+    public static boolean btconnected = false;
 
     BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothChatService mChatService = null;
@@ -53,18 +62,37 @@ public class ConnectBtActivity extends ActionBarActivity {
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            BluetoothChatFragment fragment = new BluetoothChatFragment();
-            transaction.replace(R.id.sample_content_fragment, fragment);
+            bluetoothChatFragment = new BluetoothChatFragment();
+            transaction.replace(R.id.sample_content_fragment, bluetoothChatFragment);
             transaction.commit();
         }
 
         textView = (TextView) findViewById(R.id.textView);
-        button_train_alone =(Button) findViewById(R.id.button_train_alone);
-        button_train_alone.setOnClickListener(new View.OnClickListener() {
+        button_textInterface =(Button) findViewById(R.id.button_textInterface);
+        button_textInterface.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent=new Intent(ConnectBtActivity.this,TrainAloneActivity.class);
-                startActivity(myIntent);
+                if (btconnected) {
+                    TextInterface textInterface = new TextInterface();
+                    Intent myIntent = new Intent(ConnectBtActivity.this, textInterface.getClass());
+                    startActivity(myIntent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Connect to a Board first", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        button_graphInterface =(Button) findViewById(R.id.button_graphInterface);
+        button_graphInterface.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (btconnected) {
+                    GraphInterface graphInterface = new GraphInterface();
+                    Intent myIntent=new Intent(ConnectBtActivity.this, graphInterface.getClass());
+                    startActivity(myIntent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Connect to a Board first", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -76,6 +104,24 @@ public class ConnectBtActivity extends ActionBarActivity {
                 startActivity(myIntent);
             }
         });
+
+        button_training =(Button) findViewById(R.id.button_training);
+        button_training.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (btconnected) {
+                    TrainingActivity trainingActivity = new TrainingActivity();
+                    Intent myIntent = new Intent(ConnectBtActivity.this, trainingActivity.getClass());
+                    startActivity(myIntent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Connect to a Board first", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        if (OFFLINE) {
+            button_train_together.setClickable(false);
+        }
 
     }
 
