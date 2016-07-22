@@ -1,18 +1,8 @@
 package com.example.dell.myapplication;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.bluetooth.BluetoothAdapter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 /**
  * Created by Johannes on 19.07.2016.
@@ -41,6 +31,7 @@ public abstract class BoardActivity extends Activity{
     public Handler hangtimeHandler = null;
     public Runnable runnable = null;
     public boolean stop = true;
+
 
     public void clearValues() {
         hanging = false;
@@ -119,6 +110,7 @@ public abstract class BoardActivity extends Activity{
                 }
             }
         };
+
     }
 
     public abstract void clearView();

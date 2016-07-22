@@ -25,8 +25,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import services.XmppService;
-
 
 /**
  * Created by johan on 06.07.2016.
@@ -57,7 +55,7 @@ public class ConnectBtActivity extends ActionBarActivity {
         //connect to XMPP server
         Log.d("pavan","in chat "+getIntent().getStringExtra("user_id"));
         Log.d("pavan","in chat server "+Util.SERVER);
-        XmppService.setupAndConnect(ConnectBtActivity.this,Util.SERVER,"",getIntent().getStringExtra("user_id"),Util.XMPP_PASSWORD);
+
 
 
         if (savedInstanceState == null) {
@@ -100,7 +98,9 @@ public class ConnectBtActivity extends ActionBarActivity {
         button_train_together.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                String uid = getIntent().getStringExtra("user_id");
                 Intent myIntent=new Intent(ConnectBtActivity.this,TrainTogetherActivity.class);
+                myIntent.putExtra("user_id",uid);
                 startActivity(myIntent);
             }
         });

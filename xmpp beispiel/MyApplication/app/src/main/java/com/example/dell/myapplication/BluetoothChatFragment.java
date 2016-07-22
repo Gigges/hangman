@@ -44,8 +44,6 @@ import android.widget.Toast;
 
 import com.example.dell.myapplication.common.logger.Log;
 
-import services.XmppService;
-
 /**
  * This fragment controls Bluetooth to communicate with other devices.
  */
@@ -336,7 +334,6 @@ public class BluetoothChatFragment extends Fragment {
                         receiver.decodeMsg(readBuf);
                     }
                     int m =(int)readBuf[0];
-                    sendMsg();
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     Log.e(TAG,readMessage);
@@ -435,9 +432,6 @@ public class BluetoothChatFragment extends Fragment {
     }
 
 
- public void sendMsg(){
-     if (!ConnectBtActivity.OFFLINE) {
-         XmppService.sendMessage(this.getContext(),TrainTogetherActivity.getUser()+Util.SUFFIX_CHAT, org.jivesoftware.smack.packet.Message.Type.chat,message.toString());
-     }
-   }
+
+
 }

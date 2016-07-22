@@ -19,14 +19,14 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Hangmen"
         android:theme="@style/AppTheme" >
 
         <service android:name="services.XmppService" />
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="hangy" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

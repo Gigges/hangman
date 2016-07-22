@@ -14,16 +14,16 @@ public class Util {
     public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public final static String SENDER_ID = "209690052574";
 
-    public static String base_url = "192.168.0.100";
+    public static String base_url = "192.168.0.101/hangman";
 
     public final static String  register_url=base_url+"register.php";
     public final static String  send_chat_url=base_url+"sendChatmessage.php";
 
     // xmpp variables
-    public static final String SERVER ="192.168.0.100";
-    public static final String DOMAIN = "hangboardapp.com";
-    public static final String XMPP_PASSWORD = "h4ngboard";
-    public static final String XMPP_SECREAT_KEY = "e50xzfV7";
+    public static final String SERVER ="192.168.0.101";
+    public static final String DOMAIN = "hangman";
+    public static final String XMPP_PASSWORD = "Password";
+    public static final String XMPP_SECREAT_KEY = "vJ9tEfTC";
 
     public static final String SUFFIX_CHAT = "@" + DOMAIN;
     public static final String SUFFIX_CHAT_GROUP = "@conference." + DOMAIN;
