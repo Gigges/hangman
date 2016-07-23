@@ -39,6 +39,7 @@ public class ConnectBtActivity extends ActionBarActivity {
     Button button_graphInterface;
     Button button_train_together;
     Button button_training;
+    Button button_coop;
     public static TextView textView;
     private boolean mLogShown;
     BroadcastReceiver recieve_chat;
@@ -100,6 +101,17 @@ public class ConnectBtActivity extends ActionBarActivity {
             public void onClick(View v){
                 String uid = getIntent().getStringExtra("user_id");
                 Intent myIntent=new Intent(ConnectBtActivity.this,TrainTogetherActivity.class);
+                myIntent.putExtra("user_id",uid);
+                startActivity(myIntent);
+            }
+        });
+
+        button_coop=(Button)findViewById(R.id.button_coop);
+        button_coop.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                String uid = getIntent().getStringExtra("user_id");
+                Intent myIntent=new Intent(ConnectBtActivity.this, CoopActivity.class);
                 myIntent.putExtra("user_id",uid);
                 startActivity(myIntent);
             }

@@ -15,8 +15,10 @@
         android:layout_height="wrap_content"
         android:text="TextInterface"
         android:id="@+id/button_textInterface"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/textView"
+        android:layout_alignRight="@+id/button_training"
+        android:layout_alignEnd="@+id/button_training"
+        android:layout_marginTop="56dp" />
 
     <View
         android:layout_width="match_parent"
@@ -63,5 +65,13 @@
         android:text="Training Alone"
         android:id="@+id/button_training"
         android:layout_below="@+id/button_graphInterface"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Coop"
+        android:id="@+id/button_coop"
+        android:layout_below="@+id/buttonTogether"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

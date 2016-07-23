@@ -150,6 +150,10 @@ public abstract class BoardActivity extends Activity{
             setPullup(false);
             return;
         }
+        if (code == 92) {
+            setPullup(false);
+            return;
+        }
         if (code == 91) {
             setPullup(true);
             return;
