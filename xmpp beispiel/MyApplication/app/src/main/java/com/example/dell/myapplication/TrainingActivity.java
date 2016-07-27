@@ -11,8 +11,6 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import org.w3c.dom.Text;
-
 /**
  * Created by Johannes on 20.07.2016.
  */
@@ -105,7 +103,9 @@ public class TrainingActivity extends BoardActivity {
     public void setPullup(boolean val) {
         if (val) {
             pullup = true;
+            mIVpullupHighlight.setY((float)(mIVhangboard.getTop()+ mIVhangboard.getHeight()*0.25));
             mIVpullupHighlight.setVisibility(View.VISIBLE);
+
         } else {
             pullup = false;
             mIVpullupHighlight.setVisibility(View.INVISIBLE);
@@ -134,21 +134,25 @@ public class TrainingActivity extends BoardActivity {
         int left = mIVhangboard.getLeft();
         int top = mIVhangboard.getTop();
         mIVrightHighlight.setVisibility(View.VISIBLE);
+        float offSetRight1=(float)( mIVhangboard.getWidth()*0.55);
+        float offSetRight2=(float) (mIVhangboard.getWidth()*0.77);
+        float offSetRight3=(float)( mIVhangboard.getWidth()*0.7);
+        float offSetTop=(float)(mIVhangboard.getHeight()*0.6);
         switch (hold) {
             case 0:
                 mIVrightHighlight.setVisibility(View.INVISIBLE);
                 break;
             case 1:
-                mIVrightHighlight.setX(left + 410);
-                mIVrightHighlight.setY(top + 200);
+                mIVrightHighlight.setX(left + offSetRight1);
+                mIVrightHighlight.setY(top + offSetTop);
                 break;
             case 2:
-                mIVrightHighlight.setX(left + 540);
-                mIVrightHighlight.setY(top + 200);
+                mIVrightHighlight.setX(left + offSetRight2);
+                mIVrightHighlight.setY(top + offSetTop);
                 break;
             case 3:
-                mIVrightHighlight.setX(left + 430);
-                mIVrightHighlight.setY(top + 100);
+                mIVrightHighlight.setX(left + offSetRight3);
+                mIVrightHighlight.setY(top + offSetTop);
                 break;
         }
     }
@@ -159,21 +163,25 @@ public class TrainingActivity extends BoardActivity {
         int left = mIVhangboard.getLeft();
         int top = mIVhangboard.getTop();
         mIVleftHighlight.setVisibility(View.VISIBLE);
+        float offSetLeft1=(float)(mIVhangboard.getWidth()*0.3);
+        float offSetLeft2=(float)(mIVhangboard.getWidth()*0.1);
+        float offSetLeft3=(float)(mIVhangboard.getWidth()*0.2);
+        float offSetTop=(float)(mIVhangboard.getHeight()*0.6);
         switch (hold) {
             case 0:
                 mIVleftHighlight.setVisibility(View.INVISIBLE);
                 break;
             case 1:
-                mIVleftHighlight.setX(left + 200);
-                mIVleftHighlight.setY(top + 200);
+                mIVleftHighlight.setX(left + offSetLeft1);
+                mIVleftHighlight.setY(top + offSetTop);
                 break;
             case 2:
-                mIVleftHighlight.setX(left + 70);
-                mIVleftHighlight.setY(top + 200);
+                mIVleftHighlight.setX(left + offSetLeft2);
+                mIVleftHighlight.setY(top + offSetTop);
                 break;
             case 3:
-                mIVleftHighlight.setX(left + 180);
-                mIVleftHighlight.setY(top + 100);
+                mIVleftHighlight.setX(left + offSetLeft3);
+                mIVleftHighlight.setY(top + offSetTop);
                 break;
         }
     }
@@ -261,12 +269,12 @@ public class TrainingActivity extends BoardActivity {
         public void setTask() {
             switch (number) {
                 case 0:
-                    mTVtask.setText("Grab holds 3 for 15 sec");
+                    mTVtask.setText("Grab holds 2 for 15 sec");
                     mTVtaskcontent.setText("15.0s");
                     setHangtime(15000);
                     incHangtime = false;
-                    neededRightHold = 3;
-                    neededLeftHold = 3;
+                    neededRightHold = 2;
+                    neededLeftHold = 2;
                     holdRestrict = true;
                     break;
                 case 1:

@@ -7,8 +7,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,6 +32,8 @@ public class CoopActivity extends BoardActivity {
     private ImageView mIVleftHighlightFriend;
     private ImageView mIVpullupHighlightFriend;
     private ImageView mIVhangboardFriend;
+
+    private Button mButton_connect;
 
     private TextView mTVYou;
     private TextView mTVFriend;
@@ -70,7 +72,7 @@ public class CoopActivity extends BoardActivity {
 
     public Handler timeHandler = null;
     public Runnable timerunnable = null;
-    public boolean stoptime = true;
+    public boolean stoptime = false;
 
     public long time = 0;
 
@@ -80,10 +82,10 @@ public class CoopActivity extends BoardActivity {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_coop);
+
 
         ConnectBtActivity.bluetoothChatFragment.setReceiver(this);
-
+        setContentView(R.layout.activity_coop);
         connection = XmppService.getConnection();
         XmppService.setupAndConnect(CoopActivity.this, Util.SERVER, "", getIntent().getStringExtra("user_id"), Util.XMPP_PASSWORD);
 
@@ -109,9 +111,11 @@ public class CoopActivity extends BoardActivity {
         timerunnable = new Runnable() {
             @Override
             public void run() {
-                time = time - 100;
-                onTimeChange();
-                timeHandler.postDelayed(runnable, 100);
+                if (!stoptime) {
+                    time = time - 100;
+                    onTimeChange();
+                    timeHandler.postDelayed(timerunnable, 100);
+                }
             }
         };
 
@@ -128,14 +132,22 @@ public class CoopActivity extends BoardActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(recieve_chat, new IntentFilter("message_recieved"));
 
 
-        task = new Task();
-        task.setTask();
-        task.start();
 
         mIVpullupHighlightFriend = (ImageView) findViewById(R.id.highlight_pullup_friend);
         mIVrightHighlightFriend = (ImageView) findViewById(R.id.highlight_right_friend);
         mIVleftHighlightFriend = (ImageView) findViewById(R.id.highlight_left_friend);
         mIVhangboardFriend = (ImageView) findViewById(R.id.hangboard_friend);
+
+        mButton_connect = (Button) findViewById(R.id.button_con);
+        mButton_connect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!mETuser.getText().equals("")){
+                    task.start();
+                    XmppService.sendMessage(CoopActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "70");
+                }
+            }
+        });
 
         mIVpullupHighlightYou = (ImageView) findViewById(R.id.highlight_pullup_you);
         mIVrightHighlightYou = (ImageView) findViewById(R.id.highlight_right_you);
@@ -148,6 +160,10 @@ public class CoopActivity extends BoardActivity {
         mTVtaskcontent = (TextView) findViewById(R.id.textView_taskcontent);
         mTVtime = (TextView) findViewById(R.id.textView_time);
         mETuser=(EditText)findViewById(R.id.editText_Friend);
+        task = new Task();
+        task.setTask();
+
+
     }
 
     public void setTime(long time) {
@@ -157,6 +173,10 @@ public class CoopActivity extends BoardActivity {
     public void startTime() {
         stoptime = false;
         timeHandler.post(timerunnable);
+    }
+
+    public void stopTime() {
+        stoptime = true;
     }
 
     private void onTimeChange() {
@@ -207,6 +227,7 @@ public class CoopActivity extends BoardActivity {
         if (val) {
             pullup = true;
             mIVpullupHighlightYou.setVisibility(View.VISIBLE);
+            mIVpullupHighlightYou.setY((float)(mIVhangboardYou.getY()+mIVhangboardYou.getHeight()*0.22));
         } else {
             pullup = false;
             mIVpullupHighlightYou.setVisibility(View.INVISIBLE);
@@ -229,20 +250,24 @@ public class CoopActivity extends BoardActivity {
         int left = mIVhangboardYou.getLeft();
         int top = mIVhangboardYou.getTop();
         mIVrightHighlightYou.setVisibility(View.VISIBLE);
+        float offSetRight1=(float)( mIVhangboardYou.getWidth()*0.55);
+        float offSetRight2=(float) (mIVhangboardYou.getWidth()*0.77);
+        float offSetRight3=(float)( mIVhangboardYou.getWidth()*0.7);
+        float offSetTop=(float)(mIVhangboardYou.getHeight()*0.6);
         switch (hold) {
             case 0:
                 mIVrightHighlightYou.setVisibility(View.INVISIBLE);
                 break;
             case 1:
-                mIVrightHighlightYou.setX(left + 410);
-                mIVrightHighlightYou.setY(top + 200);
+                mIVrightHighlightYou.setX(left + offSetRight1);
+                mIVrightHighlightYou.setY(top + offSetTop);
                 break;
             case 2:
-                mIVrightHighlightYou.setX(left + 540);
-                mIVrightHighlightYou.setY(top + 200);
+                mIVrightHighlightYou.setX(left + offSetRight2);
+                mIVrightHighlightYou.setY(top +offSetTop);
                 break;
             case 3:
-                mIVrightHighlightYou.setX(left +430);
+                mIVrightHighlightYou.setX(left +offSetRight3);
                 mIVrightHighlightYou.setY(top + 100);
                 break;
         }
@@ -254,21 +279,26 @@ public class CoopActivity extends BoardActivity {
         int left = mIVhangboardYou.getLeft();
         int top = mIVhangboardYou.getTop();
         mIVleftHighlightYou.setVisibility(View.VISIBLE);
+        float offSetLeft1=(float)(mIVhangboardYou.getWidth()*0.3);
+        float offSetLeft2=(float)(mIVhangboardYou.getWidth()*0.1);
+        float offSetLeft3=(float)(mIVhangboardYou.getWidth()*0.2);
+        float offSetTop=(float)(mIVhangboardYou.getHeight()*0.6);
         switch (hold) {
             case 0:
                 mIVleftHighlightYou.setVisibility(View.INVISIBLE);
                 break;
             case 1:
-                mIVleftHighlightYou.setX(left + 200);
-                mIVleftHighlightYou.setY(top + 200);
+                mIVleftHighlightYou.setX(left + offSetLeft1);
+                mIVleftHighlightYou.setY(top + offSetTop);
+
                 break;
             case 2:
-                mIVleftHighlightYou.setX(left + 70);
-                mIVleftHighlightYou.setY(top + 200);
+                mIVleftHighlightYou.setX(left +offSetLeft2);
+                mIVleftHighlightYou.setY(top +offSetTop);
                 break;
             case 3:
-                mIVleftHighlightYou.setX(left + 180);
-                mIVleftHighlightYou.setY(top + 100);
+                mIVleftHighlightYou.setX(left +offSetLeft3);
+                mIVleftHighlightYou.setY(top +offSetTop);
                 break;
         }
     }
@@ -358,6 +388,9 @@ public class CoopActivity extends BoardActivity {
         if (code == 80) {
             task.onCompletedFriend();
         }
+        if (code == 70) {
+            task.start();
+        }
     }
 
     public void onHangtimeChangeFriend() {
@@ -386,6 +419,7 @@ public class CoopActivity extends BoardActivity {
         if (val) {
             pullupFriend = true;
             mIVpullupHighlightFriend.setVisibility(View.VISIBLE);
+            mIVpullupHighlightFriend.setY((float)(mIVhangboardFriend.getY()+mIVhangboardFriend.getHeight()*0.22));
         } else {
             pullupFriend = false;
             mIVpullupHighlightFriend.setVisibility(View.INVISIBLE);
@@ -405,21 +439,25 @@ public class CoopActivity extends BoardActivity {
         int left = mIVhangboardFriend.getLeft();
         int top = mIVhangboardFriend.getTop();
         mIVrightHighlightFriend.setVisibility(View.VISIBLE);
+        float offSetRight1=(float)( mIVhangboardFriend.getWidth()*0.55);
+        float offSetRight2=(float) (mIVhangboardFriend.getWidth()*0.77);
+        float offSetRight3=(float)( mIVhangboardFriend.getWidth()*0.7);
+        float offSetTop=(float)(mIVhangboardFriend.getHeight()*0.6);
         switch (hold) {
             case 0:
                 mIVrightHighlightFriend.setVisibility(View.INVISIBLE);
                 break;
             case 1:
-                mIVrightHighlightFriend.setX(left + 410);
-                mIVrightHighlightFriend.setY(top + 200);
+                mIVrightHighlightFriend.setX(left+offSetRight1);
+                mIVrightHighlightFriend.setY(top + offSetTop);
                 break;
             case 2:
-                mIVrightHighlightFriend.setX(left + 540);
-                mIVrightHighlightFriend.setY(top + 200);
+                mIVrightHighlightFriend.setX(left + offSetRight2);
+                mIVrightHighlightFriend.setY(top + offSetTop);
                 break;
             case 3:
-                mIVrightHighlightFriend.setX(left +430);
-                mIVrightHighlightFriend.setY(top + 100);
+                mIVrightHighlightFriend.setX(left +offSetRight3);
+                mIVrightHighlightFriend.setY(top + offSetTop);
                 break;
         }
     }
@@ -429,21 +467,25 @@ public class CoopActivity extends BoardActivity {
         int left = mIVhangboardFriend.getLeft();
         int top = mIVhangboardFriend.getTop();
         mIVleftHighlightFriend.setVisibility(View.VISIBLE);
+        float offSetLeft1=(float)(mIVhangboardFriend.getWidth()*0.3);
+        float offSetLeft2=(float)(mIVhangboardFriend.getWidth()*0.1);
+        float offSetLeft3=(float)(mIVhangboardFriend.getWidth()*0.2);
+        float offSetTop=(float)(mIVhangboardFriend.getHeight()*0.6);
         switch (hold) {
             case 0:
                 mIVleftHighlightFriend.setVisibility(View.INVISIBLE);
                 break;
             case 1:
-                mIVleftHighlightFriend.setX(left + 200);
-                mIVleftHighlightFriend.setY(top + 200);
+                mIVleftHighlightFriend.setX(left + offSetLeft1);
+                mIVleftHighlightFriend.setY(top + offSetTop);
                 break;
             case 2:
-                mIVleftHighlightFriend.setX(left + 70);
-                mIVleftHighlightFriend.setY(top + 200);
+                mIVleftHighlightFriend.setX(left + offSetLeft2);
+                mIVleftHighlightFriend.setY(top + offSetTop);
                 break;
             case 3:
-                mIVleftHighlightFriend.setX(left + 180);
-                mIVleftHighlightFriend.setY(top + 100);
+                mIVleftHighlightFriend.setX(left +offSetLeft3);
+                mIVleftHighlightFriend.setY(top + offSetTop);
                 break;
         }
     }
@@ -459,6 +501,7 @@ public class CoopActivity extends BoardActivity {
     public void setPullupsFriend(int pulls) {
         pullupsFriend = pulls;
         task.pullupChangeFriend(pulls);
+
     }
 
     public void setHangtimeFriend(long time) {
@@ -480,16 +523,34 @@ public class CoopActivity extends BoardActivity {
 
     public class Task {
         int i = 0;
-        long tasktime = 15;
+        long tasktime = 15000;
         boolean lastcompleted = false;
         boolean completed = true;
         boolean completedFriend = true;
 
+        Runnable wait = new Runnable() {
+            @Override
+            public void run() {
+                setTask();
+                start();
+            }};
+
+        Handler waithandler = new Handler();
+
         public void setTask() {
-            mTVtask.setText("Do " + String.valueOf(i) + "Pull Ups!");
-            mTVtime.setText(String.valueOf(tasktime) + ".0s");
-            completed = false;
-            completedFriend = false;
+            if (i == 0) {
+                mTVtask.setText("Get Ready!");
+            } else {
+                mTVtask.setText("Do " + String.valueOf(i) + " Pull Ups!");
+            }
+            mTVtime.setText(String.valueOf((float) (time / 100) / 10) + "s");
+            if (i != 0) {
+                completed = false;
+                completedFriend = false;
+            } else {
+                completed = true;
+                completedFriend = true;
+            }
             setTime(tasktime);
             setPullups(0);
             setPullupsFriend(0);
@@ -497,6 +558,7 @@ public class CoopActivity extends BoardActivity {
 
         public void onTimeChange(long time) {
             if ( time <= 0 ) {
+                stopTime();
                 if (!completed && !completedFriend) {
                     if (i == 1) {
                         mTVtask.setText("Draw!");
@@ -516,12 +578,11 @@ public class CoopActivity extends BoardActivity {
                         } else {
                             i++;
                             if (i % 5 == 0) {
-                                tasktime = tasktime + 10;
+                                tasktime = tasktime + 7000;
                             } else {
-                                tasktime = tasktime + 5;
+                                tasktime = tasktime + 5000;
                             }
-                            setTask();
-                            start();
+                            waithandler.postDelayed(wait, 200);
                         }
                     }
                 }
@@ -536,8 +597,9 @@ public class CoopActivity extends BoardActivity {
                 }
                 XmppService.sendMessage(CoopActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "80");
             } else {
-                mTVtask.setText("Do " + String.valueOf(i - pulls) + "Pull Ups!");
+                //mTVtask.setText("Do " + String.valueOf(i - pulls) + " Pull Ups!");
             }
+            mTVtaskcontent.setText(String.valueOf(pulls));
         }
 
         public void pullupChangeFriend(int pulls) {

@@ -22,7 +22,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/editText_Friend"
             android:layout_weight="1"
-            android:textSize="30dp" />
+            android:textSize="20dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Connect"
+            android:id="@+id/button_con" />
     </LinearLayout>
 
     <ImageView
@@ -31,23 +37,22 @@
         android:id="@+id/hangboard_friend"
         android:padding="5dp"
         android:src="@drawable/hangboard_more_crop"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="You"
         android:id="@+id/textView_you"
-        android:textSize="30dp"
-        android:layout_gravity="center_horizontal" />
+        android:textSize="30dp" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/hangboard_you"
         android:padding="5dp"
-        android:src="@drawable/hangboard_more_crop"
-        android:layout_gravity="center_horizontal" />
+        android:src="@drawable/hangboard_more_crop" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -100,7 +105,9 @@
         android:visibility="invisible"
         android:layout_alignBottom="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="37dp" />
+        android:scaleType="centerInside"
+        android:layout_gravity="center"
+        android:layout_marginBottom="100dp" />
 
     <ImageView
         android:id="@+id/highlight_right_friend"
@@ -126,9 +133,10 @@
         android:layout_height="100dp"
         android:src="@drawable/shape_pullup"
         android:visibility="invisible"
-        android:layout_alignBottom="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="37dp" />
+        android:layout_marginBottom="37dp"
+        android:scaleType="center"
+        android:layout_gravity="center" />
 
 
 </LinearLayout>

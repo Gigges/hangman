@@ -1,6 +1,5 @@
 package com.example.dell.myapplication;
 
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -89,20 +88,24 @@ public class GraphInterface extends BoardActivity {
         int left = mIVhangboard.getLeft();
         int top = mIVhangboard.getTop();
         mIVrightHighlight.setVisibility(View.VISIBLE);
+        float offSetRight1=(float)( mIVhangboard.getWidth()*0.55);
+        float offSetRight2=(float) (mIVhangboard.getWidth()*0.77);
+        float offSetRight3=(float)( mIVhangboard.getWidth()*0.7);
+        float offSetTop=(float)(mIVhangboard.getHeight()*0.75);
         switch (hold) {
             case 0:
                 mIVrightHighlight.setVisibility(View.INVISIBLE);
             case 1:
-                mIVrightHighlight.setX(left + 410);
-                mIVrightHighlight.setY(top + 580);
+                mIVrightHighlight.setX(left +offSetRight1);
+                mIVrightHighlight.setY(top + offSetTop);
                 break;
             case 2:
-                mIVrightHighlight.setX(left + 540);
-                mIVrightHighlight.setY(top + 580);
+                mIVrightHighlight.setX(left + offSetRight2);
+                mIVrightHighlight.setY(top +offSetTop);
                 break;
             case 3:
-                mIVrightHighlight.setX(left +430);
-                mIVrightHighlight.setY(top + 480);
+                mIVrightHighlight.setX(left +offSetRight3);
+                mIVrightHighlight.setY(top + offSetTop);
         }
     }
 
@@ -112,20 +115,24 @@ public class GraphInterface extends BoardActivity {
         int left = mIVhangboard.getLeft();
         int top = mIVhangboard.getTop();
         mIVleftHighlight.setVisibility(View.VISIBLE);
+        float offSetLeft1=(float)(mIVhangboard.getWidth()*0.3);
+        float offSetLeft2=(float)(mIVhangboard.getWidth()*0.1);
+        float offSetLeft3=(float)(mIVhangboard.getWidth()*0.2);
+        float offSetTop=(float)(mIVhangboard.getHeight()*0.75);
         switch (hold) {
             case 0:
                 mIVleftHighlight.setVisibility(View.INVISIBLE);
             case 1:
-                mIVleftHighlight.setX(left + 200);
-                mIVleftHighlight.setY(top + 580);
+                mIVleftHighlight.setX(left + offSetLeft1);
+                mIVleftHighlight.setY(top + offSetTop);
                 break;
             case 2:
-                mIVleftHighlight.setX(left + 70);
-                mIVleftHighlight.setY(top + 580);
+                mIVleftHighlight.setX(left + offSetLeft2);
+                mIVleftHighlight.setY(top + offSetTop);
                 break;
             case 3:
-                mIVleftHighlight.setX(left + 180);
-                mIVleftHighlight.setY(top + 480);
+                mIVleftHighlight.setX(left +offSetLeft3);
+                mIVleftHighlight.setY(top + offSetTop);
         }
     }
 
