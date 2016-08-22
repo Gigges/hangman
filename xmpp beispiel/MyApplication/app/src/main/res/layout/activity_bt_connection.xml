@@ -74,4 +74,31 @@
         android:id="@+id/button_coop"
         android:layout_below="@+id/buttonTogether"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Alone"
+        android:id="@+id/button_alone"
+        android:layout_below="@+id/button_coop"
+        android:layout_toLeftOf="@+id/button_against"
+        android:layout_toStartOf="@+id/button_against" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Against"
+        android:id="@+id/button_against"
+        android:layout_below="@+id/button_coop"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Together"
+        android:id="@+id/button_together"
+        android:layout_below="@+id/button_coop"
+        android:layout_toRightOf="@+id/button_against"
+        android:layout_toEndOf="@+id/button_against" />
+    
 </RelativeLayout>

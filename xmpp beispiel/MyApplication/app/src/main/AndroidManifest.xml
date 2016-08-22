@@ -50,6 +50,12 @@
 
         <activity android:name=".CoopActivity"></activity>
 
+        <activity android:name=".AloneActivity"></activity>
+
+        <activity android:name=".TogetherActivity"></activity>
+
+        <activity android:name=".AgainstActivity"></activity>
+
         <receiver
             android:name=".GcmBroadcastReceiver"
             android:exported="true"

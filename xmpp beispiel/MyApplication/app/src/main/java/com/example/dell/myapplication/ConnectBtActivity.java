@@ -40,6 +40,9 @@ public class ConnectBtActivity extends ActionBarActivity {
     Button button_train_together;
     Button button_training;
     Button button_coop;
+    Button button_alone;
+    Button button_together;
+    Button button_against;
     public static TextView textView;
     private boolean mLogShown;
     BroadcastReceiver recieve_chat;
@@ -128,6 +131,41 @@ public class ConnectBtActivity extends ActionBarActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "Connect to a Board first", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        button_alone =(Button) findViewById(R.id.button_alone);
+        button_alone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (btconnected) {
+                    Intent myIntent = new Intent(ConnectBtActivity.this, AloneActivity.class);
+                    startActivity(myIntent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Connect to a Board first", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        button_together=(Button)findViewById(R.id.button_together);
+        button_together.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                String uid = getIntent().getStringExtra("user_id");
+                Intent myIntent=new Intent(ConnectBtActivity.this, TogetherActivity.class);
+                myIntent.putExtra("user_id",uid);
+                startActivity(myIntent);
+            }
+        });
+
+        button_against=(Button)findViewById(R.id.button_against);
+        button_against.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                String uid = getIntent().getStringExtra("user_id");
+                Intent myIntent=new Intent(ConnectBtActivity.this, AgainstActivity.class);
+                myIntent.putExtra("user_id",uid);
+                startActivity(myIntent);
             }
         });
 
