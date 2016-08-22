@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:padding="5dp"
+        android:src="@drawable/hangboard_crop"
+        android:layout_gravity="left"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="-50dp" />
+
+    <ImageView
+        android:id="@+id/highlight_right"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/shape_oval"
+        android:layout_alignTop="@id/imageView"
+        android:layout_alignLeft="@id/imageView"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/highlight_left"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/shape_oval"
+        android:layout_alignTop="@id/imageView"
+        android:layout_alignLeft="@id/imageView"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/highlight_pullup"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/shape_pullup"
+        android:visibility="invisible"
+        android:layout_alignBottom="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="37dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0.0s"
+        android:id="@+id/textView_hangtime"
+        android:textSize="50dp"
+        android:layout_below="@+id/textView12"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/textView_pullups"
+        android:textSize="50dp"
+        android:layout_below="@+id/textView15"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pull Ups:"
+        android:textSize="20dp"
+        android:id="@+id/textView15"
+        android:layout_below="@+id/imageView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hangtime:"
+        android:textSize="20dp"
+        android:id="@+id/textView12"
+        android:layout_below="@+id/imageView"
+        android:layout_alignRight="@+id/textView_hangtime"
+        android:layout_alignEnd="@+id/textView_hangtime" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Points:"
+        android:textSize="20dp"
+        android:id="@+id/textView13"
+        android:layout_below="@+id/textView_pullups"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/textView_points"
+        android:textSize="50dp"
+        android:layout_below="@+id/textView13"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Receive points forevery 2 sec \n hangtime and every pullup \n 14 for holds 1 \n 12 for uneven \n 10 for holds 2 "
+        android:id="@+id/textView18"
+        android:layout_below="@+id/textView_hangtime"
+        android:layout_alignRight="@+id/textView_hangtime"
+        android:layout_alignEnd="@+id/textView_hangtime"
+        android:textSize="20dp" />
+</RelativeLayout>
