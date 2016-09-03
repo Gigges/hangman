@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Friend"
+            android:id="@+id/textView_friend"
+            android:textSize="30dp"
+            android:layout_gravity="center_horizontal"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText_Friend"
+            android:layout_weight="1"
+            android:textSize="20dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Connect"
+            android:id="@+id/button_con" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You"
+        android:id="@+id/textView_you"
+        android:textSize="30dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/hangboard_you"
+        android:padding="5dp"
+        android:src="@drawable/hangboard_more_crop" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Pull Ups / Hangtime / Points"
+        android:id="@+id/textView19"
+        android:textSize="20dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:id="@+id/textView_pullup"
+            android:textSize="40dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:id="@+id/textView21"
+            android:textSize="40dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0s"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:id="@+id/textView_hangtime"
+            android:textSize="40dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:id="@+id/textView23"
+            android:textSize="40dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:id="@+id/textView_points"
+            android:textSize="40dp" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Friends Points"
+        android:id="@+id/textView25"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:id="@+id/textView_points_friend"
+        android:textSize="40dp" />
+
+    <ImageView
+        android:id="@+id/highlight_right_you"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/shape_oval"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/highlight_left_you"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/shape_oval"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/highlight_pullup_you"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/shape_pullup"
+        android:visibility="invisible"
+        android:layout_alignBottom="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:scaleType="centerInside"
+        android:layout_gravity="center"
+        android:layout_marginBottom="100dp" />
+
+    <ImageView
+        android:id="@+id/highlight_right_friend"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/shape_oval"
+        android:layout_alignTop="@id/imageView"
+        android:layout_alignLeft="@id/imageView"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/highlight_left_friend"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/shape_oval"
+        android:layout_alignTop="@id/imageView"
+        android:layout_alignLeft="@id/imageView"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/highlight_pullup_friend"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/shape_pullup"
+        android:visibility="invisible"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="37dp"
+        android:scaleType="center"
+        android:layout_gravity="center" />
+
+
+</LinearLayout>
