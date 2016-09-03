@@ -66,7 +66,7 @@ public class AgainstActivity extends BoardActivity {
     public int leftFingerFriend = 0;
     public int pullupsFriend = 0;
     public long hangtimeFriend = 0;
-    public boolean init = false;
+    public boolean init;
 
     public boolean incPullUpsFriend = true;
     public boolean incHangtimeFriend = true;
@@ -93,6 +93,7 @@ public class AgainstActivity extends BoardActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init = false;
 
 
         ConnectBtActivity.bluetoothChatFragment.setReceiver(this);
@@ -400,28 +401,28 @@ public class AgainstActivity extends BoardActivity {
         String[] array = buf.split(";");
         int code = Integer.valueOf(array[0]);
         if (code > 200) {
-            //chill
+           return;
         }
         if (code == 200) {
-            //chill
+            return;
         }
         if (code > 100) {
-            //chill
+            return;
         }
         if (code == 100) {
-            //chill
+            return;
         }
         if (code == 92) {
-            //chill
+            return;
         }
         if (code == 91) {
-            //chill
+            return;
         }
         if (code == 90) {
-            //chill
+            return;
         }
         if (code == 80) {
-            //chill
+            return;
         }
         if (code == 70) {
             if (!init) {
