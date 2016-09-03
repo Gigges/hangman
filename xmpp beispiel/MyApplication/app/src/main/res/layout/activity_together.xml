@@ -51,9 +51,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/editText_Team"
             android:layout_weight="1"
-            android:textSize="20dp"
-            android:editable="false"
-            android:enabled="false" />
+            android:textSize="20dp" />
 
     </LinearLayout>
 
@@ -74,7 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
-            android:id="@+id/textView_pullups"
+            android:id="@+id/textView_pullupnum"
             android:textSize="40dp" />
 
         <TextView

@@ -13,14 +13,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringEncoder;
 
 import java.util.ArrayList;
 
@@ -31,7 +28,16 @@ import services.XmppService;
  */
 public class TogetherActivity extends BoardActivity {
 
+
+    private boolean master = false;
+
+    private ArrayList<Score> leaderboard;
+
+    private TextView mTVpointsYou;
+    private TextView mTVpointsFriend;
+
     private Button mButton_connect;
+
 
     private TextView mTVpullups;
     private TextView mTVhangtime;
@@ -39,10 +45,6 @@ public class TogetherActivity extends BoardActivity {
     private EditText mETuser;
     private EditText mETteam;
     private ListView mLVleaderboard;
-
-    private boolean master = false;
-
-    private ArrayList<Score> leaderboard;
 
     BroadcastReceiver recieve_chat;
     Connection connection;
@@ -52,6 +54,9 @@ public class TogetherActivity extends BoardActivity {
     public boolean hangingFriend = false;
     public boolean pullupFriend = false;
 
+    public int points;
+    public boolean finished=false;
+
     public boolean rightGrabbedFriend = false;
     public boolean leftGrabbedFriend = false;
     public int rightGrabFriend = 0;
@@ -60,10 +65,10 @@ public class TogetherActivity extends BoardActivity {
     public int leftFingerFriend = 0;
     public int pullupsFriend = 0;
     public long hangtimeFriend = 0;
+    public boolean init = false;
 
     public boolean incPullUpsFriend = true;
     public boolean incHangtimeFriend = true;
-    public String username = "";
 
     public int neededRightHoldFriend = 0;
     public int neededLeftHoldFriend = 0;
@@ -78,22 +83,22 @@ public class TogetherActivity extends BoardActivity {
     public boolean stoptime = false;
 
     public long time = 0;
-    public int points = 0;
-    public boolean finished = false;
 
-    public Task task;
+
+    private String username;
+    private boolean finishedFriend = false;
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
         ConnectBtActivity.bluetoothChatFragment.setReceiver(this);
-        setContentView(R.layout.activity_together);
         connection = XmppService.getConnection();
         XmppService.setupAndConnect(TogetherActivity.this, Util.SERVER, "", getIntent().getStringExtra("user_id"), Util.XMPP_PASSWORD);
-        username = getIntent().getStringExtra("user_id");
+
+        setContentView(R.layout.activity_together);
 
         hangtimeHandlerFriend = new Handler();
         runnableFriend = new Runnable() {
@@ -105,7 +110,7 @@ public class TogetherActivity extends BoardActivity {
                     } else {
                         hangtimeFriend = hangtimeFriend - 100;
                     }
-                    onHangtimeChangeFriend();
+
                     hangtimeHandlerFriend.postDelayed(runnableFriend, 100);
                 }
             }
@@ -117,45 +122,51 @@ public class TogetherActivity extends BoardActivity {
             public void run() {
                 if (!stoptime) {
                     time = time - 100;
-                    onTimeChange();
+
                     timeHandler.postDelayed(timerunnable, 100);
                 }
             }
         };
 
-        recieve_chat=new BroadcastReceiver() {
+        recieve_chat = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-            String msg = intent.getStringExtra("message");
-            if (msg != null) {
-                decodeMsgFriend(msg);
-            }
+                String msg = intent.getStringExtra("message");
+                if (msg != null) {
+                    decodeMsgFriend(msg);
+                }
             }
         };
 
         LocalBroadcastManager.getInstance(this).registerReceiver(recieve_chat, new IntentFilter("message_recieved"));
 
+
+
+        mTVpullups = (TextView) findViewById(R.id.textView_pullupnum);
+        mTVhangtime = (TextView) findViewById(R.id.textView_time);
+        mTVpoints = (TextView) findViewById(R.id.textView_points);
+        mETuser = (EditText) findViewById(R.id.editText_Friend);
+        mETteam = (EditText) findViewById(R.id.editText_Team);
+        mLVleaderboard = (ListView) findViewById(R.id.listView_leaderboard);
+
+
+        username = getIntent().getStringExtra("user_id");
         mButton_connect = (Button) findViewById(R.id.button_con);
         mButton_connect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mETuser.getText().equals("")){
-                    task.start();
-                    XmppService.sendMessage(TogetherActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, " 70 " + username);
+                if (!mETuser.getText().equals("")) {
+                    XmppService.sendMessage(TogetherActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "70;" + username);
                     mETteam.setText(username + " & " + mETuser.getText());
+                    XmppService.sendMessage(TogetherActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "60;" + mETteam.getText());
                     master = true;
                 }
             }
         });
 
-        mTVpullups = (TextView) findViewById(R.id.textView_pullups);
-        mTVhangtime = (TextView) findViewById(R.id.textView_hangtime);
-        mTVpoints = (TextView) findViewById(R.id.textView_points);
+
+
         mETuser = (EditText) findViewById(R.id.editText_Friend);
-        mETteam = (EditText) findViewById(R.id.editText_Team);
-        mLVleaderboard = (ListView) findViewById(R.id.listView_leaderboard);
-        task = new Task();
-        task.setTask();
 
         TextWatcher watcher = new TextWatcher() {
             @Override
@@ -171,7 +182,7 @@ public class TogetherActivity extends BoardActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (master) {
-                    XmppService.sendMessage(TogetherActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, " 60 " + mETteam.getText());
+                    XmppService.sendMessage(TogetherActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "60;" + mETteam.getText());
                 }
             }
         };
@@ -201,6 +212,8 @@ public class TogetherActivity extends BoardActivity {
         } else {
             adapter.add("No Leaderboard Found!");
         }
+
+
     }
 
     public void setTime(long time) {
@@ -216,10 +229,7 @@ public class TogetherActivity extends BoardActivity {
         stoptime = true;
     }
 
-    private void onTimeChange() {
-        task.onTimeChange(time);
-        mTVhangtime.setText(String.valueOf((float) (time / 100) / 10) + "s");
-    }
+
 
     @Override
     public void decodeMsg(byte[] buf) {
@@ -230,9 +240,7 @@ public class TogetherActivity extends BoardActivity {
 
     @Override
     public void clearView() {
-        mTVpoints.setText("0");
-        mTVpullups.setText("0");
-        mTVhangtime.setText("0");
+        return;
     }
 
     @Override
@@ -248,16 +256,20 @@ public class TogetherActivity extends BoardActivity {
             } else {
                 pnts = 12;
             }
-            XmppService.sendMessage(TogetherActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, " 50 "+String.valueOf(pnts));
-            setPoints(points + pnts);
-            mTVhangtime.setText(String.valueOf((float) (super.getHangtime() / 100) / 10) + "s");
+            if (!master) {
+                XmppService.sendMessage(TogetherActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "50;" + String.valueOf(pnts));
+            } else {
+                setPoints(points + pnts);
+            }
         }
+        mTVhangtime.setText(String.valueOf((float) (super.getHangtime() / 100) / 10) + "s");
     }
 
     public void setPoints(int points) {
-        if (! finished) {
+        if (!(finished && finishedFriend)) {
             this.points = points;
             mTVpoints.setText(String.valueOf(points));
+            XmppService.sendMessage(TogetherActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "55;" + String.valueOf(this.points));
         }
     }
 
@@ -265,13 +277,14 @@ public class TogetherActivity extends BoardActivity {
     public void setHanging(boolean val) {
         if (val && isRightGrabbed() && isLeftGrabbed() && !finished) {
             super.hanging = true;
-            setPoints(0);
+            setHangtime(0);
             startHangtime();
         } else {
             super.hanging = false;
             stopHangtime();
             if (hangtime > 0) {
                 finished = true;
+                XmppService.sendMessage(TogetherActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "40");
             }
         }
     }
@@ -282,6 +295,7 @@ public class TogetherActivity extends BoardActivity {
             pullup = true;
         } else {
             pullup = false;
+
         }
     }
 
@@ -317,8 +331,11 @@ public class TogetherActivity extends BoardActivity {
 
     @Override
     public void setPullups(int pulls) {
-        pullups = pulls;
-        task.pullupChange(pulls);
+        if (!finished) {
+            pullups = pulls;
+            mTVpullups.setText(String.valueOf(pulls));
+        }
+
     }
 
     @Override
@@ -328,10 +345,10 @@ public class TogetherActivity extends BoardActivity {
 
     @Override
     public void stepPullUps() {
-        if (!hanging || (holdRestrict && (rightGrab != neededRightHold || leftGrab != neededLeftHold))) {
+        if (!hanging) {
             return;
         }
-        int pnts = 0;
+        int pnts;
         if (rightGrab == leftGrab) {
             if (rightGrab == 1) {
                 pnts = 14;
@@ -341,8 +358,11 @@ public class TogetherActivity extends BoardActivity {
         } else {
             pnts = 12;
         }
-        XmppService.sendMessage(TogetherActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, " 50 "+String.valueOf(pnts));
-        setPoints(points + pnts);
+        if (!master) {
+            XmppService.sendMessage(TogetherActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "50;" + String.valueOf(pnts));
+        } else {
+            setPoints(points + pnts);
+        }
         if (incPullUps) {
             setPullups(pullups + 1);
         } else {
@@ -353,240 +373,64 @@ public class TogetherActivity extends BoardActivity {
     //-------------------------------------Friend
 
     public void decodeMsgFriend(String buf) {
-        int code = Integer.valueOf(buf.substring(0, 2));
+        String[] array = buf.split(";");
+        int code = Integer.valueOf(array[0]);
         if (code > 200) {
-            setRightGrabbedFriend(true);
-            setRightGrabFriend((code - 200) / 10);
-            setRightFingerFriend(code % 10);
-            setHangingFriend(true);
-            setPullupsFriend(0);
-            return;
+            //chill
         }
         if (code == 200) {
-            setRightGrabbedFriend(false);
-            setRightGrabFriend(0);
-            setRightFingerFriend(0);
-            setHangingFriend(false);
-            setPullupFriend(false);
-            return;
+            //chill
         }
         if (code > 100) {
-            setLeftGrabbedFriend(true);
-            setLeftGrabFriend((code - 100) / 10);
-            setLeftFingerFriend(code % 10);
-            setHangingFriend(true);
-            setPullupsFriend(0);
-            return;
+            //chill
         }
         if (code == 100) {
-            setLeftGrabbedFriend(false);
-            setLeftGrabFriend(0);
-            setLeftFingerFriend(0);
-            setHangingFriend(false);
-            setPullupFriend(false);
-            return;
+            //chill
         }
         if (code == 92) {
-            setPullupFriend(false);
-            return;
+            //chill
         }
         if (code == 91) {
-            setPullupFriend(true);
-            return;
+            //chill
         }
         if (code == 90) {
-            setPullupFriend(false);
-            stepPullUpsFriend();
-            return;
+            //chill
         }
         if (code == 80) {
-            task.onCompletedFriend();
+            //chill
         }
         if (code == 70) {
             master = false;
-            mETuser.setText(buf.substring(3));
+            mETuser.setText(array[1]);
             mETuser.setEnabled(false);
             mETteam.setEnabled(false);
+            mButton_connect.setEnabled(false);
         }
         if (code == 60) {
-            mETteam.setText(buf.substring(3));
+            if ((array.length > 1)){
+                mETteam.setText(array[1]);
+            } else {
+                mETteam.setText("");
+            }
+        }
+        if (code == 55) {
+            mTVpoints.setText(array[1]);
         }
         if (code == 50) {
-            setPoints(points + Integer.valueOf(buf.substring(3)));
+            setPoints(points + Integer.valueOf(array[1]));
+        }
+
+        if (code == 40) {
+           finishedFriend = true;
         }
     }
 
-    public void onHangtimeChangeFriend() {
-    }
 
-    public void setHangingFriend(boolean val) {
-        if (val && rightGrabbedFriend && leftGrabbedFriend) {
-            super.hanging = true;
-            startHangtimeFriend();
-        } else {
-            super.hanging = false;
-            stopHangtimeFriend();
-        }
-    }
 
-    private void stopHangtimeFriend() {
-        stopFriend = false;
-    }
 
-    private void startHangtimeFriend() {
-        stopFriend = false;
-        hangtimeHandlerFriend.post(runnableFriend);
-    }
 
-    public void setPullupFriend(boolean val) {
-        if (val) {
-            pullupFriend = true;
-        } else {
-            pullupFriend = false;
-        }
-    }
 
-    public void setRightGrabbedFriend(boolean grab) {
-        rightGrabbedFriend = grab;
-    }
-
-    public void setLeftGrabbedFriend(boolean grab) {
-        leftGrabbedFriend = grab;
-    }
-
-    public void setRightGrabFriend(int hold) {
-        rightGrabFriend = hold;
-    }
-
-    public void setLeftGrabFriend(int hold) {
-        leftGrabFriend = hold;
-    }
-
-    public void setRightFingerFriend(int finger) {
-        rightFingerFriend = finger;
-    }
-
-    public void setLeftFingerFriend(int finger) {
-        leftFingerFriend = finger;
-    }
-
-    public void setPullupsFriend(int pulls) {
-        pullupsFriend = pulls;
-        task.pullupChangeFriend(pulls);
-
-    }
-
-    public void setHangtimeFriend(long time) {
-        hangtimeFriend = time;
-    }
-
-    public void stepPullUpsFriend() {
-        if (!hangingFriend || (holdRestrictFriend && (rightGrabFriend != neededRightHoldFriend || leftGrabFriend != neededLeftHoldFriend))) {
-            return;
-        }
-        if (incPullUpsFriend) {
-            setPullups(pullupsFriend + 1);
-        } else {
-            setPullups(pullupsFriend - 1);
-        }
-    }
-
-    //-----------------------------------------Task
-
-    public class Task {
-        int i = 0;
-        long tasktime = 15000;
-        boolean lastcompleted = false;
-        boolean completed = true;
-        boolean completedFriend = true;
-
-        Runnable wait = new Runnable() {
-            @Override
-            public void run() {
-                setTask();
-                start();
-            }};
-
-        Handler waithandler = new Handler();
-
-        public void setTask() {
-            if (i == 0) {
-                //mTVtask.setText("Get Ready!");
-            } else {
-                //mTVtask.setText("Do " + String.valueOf(i) + " Pull Ups!");
-            }
-            //mTVtime.setText(String.valueOf((float) (time / 100) / 10) + "s");
-            if (i != 0) {
-                completed = false;
-                completedFriend = false;
-            } else {
-                completed = true;
-                completedFriend = true;
-            }
-            setTime(tasktime);
-            setPullups(0);
-            setPullupsFriend(0);
-        }
-
-        public void onTimeChange(long time) {
-            if ( time <= 0 ) {
-                stopTime();
-                if (!completed && !completedFriend) {
-                    if (i == 1) {
-                        //mTVtask.setText("Draw!");
-                    } else {
-                        if (lastcompleted) {
-                            //mTVtask.setText("You win, because you finished first in the round before!");
-                        } else {
-                           // mTVtask.setText("Your Friend wins, because he finished first in the round before!");
-                        }
-                    }
-                } else {
-                    if (!completedFriend && completed) {
-                        //mTVtask.setText("You win, because your friend did not finish this round!");
-                    } else {
-                        if (completedFriend && !completed) {
-                            //mTVtask.setText("Your Friend wins, because you did not finish this round!");
-                        } else {
-                            i++;
-                            if (i % 5 == 0) {
-                                tasktime = tasktime + 7000;
-                            } else {
-                                tasktime = tasktime + 5000;
-                            }
-                            waithandler.postDelayed(wait, 200);
-                        }
-                    }
-                }
-            }
-        }
-
-        public void pullupChange(int pulls) {
-            if (pulls >= i) {
-                completed = true;
-                if (completedFriend) {
-                    lastcompleted = false;
-                }
-                XmppService.sendMessage(TogetherActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "80");
-            } else {
-                //mTVtask.setText("Do " + String.valueOf(i - pulls) + " Pull Ups!");
-            }
-            //mTVtaskcontent.setText(String.valueOf(pulls));
-        }
-
-        public void pullupChangeFriend(int pulls) {
-
-        }
-
-        public void onCompletedFriend() {
-            completedFriend = true;
-            if (completed) {
-                lastcompleted = true;
-            }
-        }
-
-        public void start(){
-            startTime();
-        }
-    }
 }
+
+
+

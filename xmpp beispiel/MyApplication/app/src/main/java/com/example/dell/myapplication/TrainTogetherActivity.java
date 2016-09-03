@@ -93,7 +93,7 @@ public class TrainTogetherActivity extends BoardActivity {
 
         Byte code=0;
 
-        recieve_chat=onnew BroadcastReceiver() {
+        recieve_chat=new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 

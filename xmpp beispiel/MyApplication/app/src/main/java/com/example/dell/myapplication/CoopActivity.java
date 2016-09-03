@@ -133,10 +133,9 @@ public class CoopActivity extends BoardActivity {
 
 
 
-        mIVpullupHighlightFriend = (ImageView) findViewById(R.id.highlight_pullup_friend);
-        mIVrightHighlightFriend = (ImageView) findViewById(R.id.highlight_right_friend);
-        mIVleftHighlightFriend = (ImageView) findViewById(R.id.highlight_left_friend);
-        mIVhangboardFriend = (ImageView) findViewById(R.id.hangboard_friend);
+         mIVrightHighlightFriend = (ImageView) findViewById(R.id.highlight_right_friend);
+         mIVleftHighlightFriend = (ImageView) findViewById(R.id.highlight_left_friend);
+         mIVhangboardFriend = (ImageView) findViewById(R.id.hangboard_friend);
 
         mButton_connect = (Button) findViewById(R.id.button_con);
         mButton_connect.setOnClickListener(new View.OnClickListener() {

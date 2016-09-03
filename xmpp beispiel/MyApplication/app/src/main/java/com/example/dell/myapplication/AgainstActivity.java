@@ -33,6 +33,11 @@ public class AgainstActivity extends BoardActivity {
     private ImageView mIVpullupHighlightFriend;
     private ImageView mIVhangboardFriend;
 
+    private TextView mTVhangtime;
+    private TextView mTVpullups;
+    private TextView mTVpointsYou;
+    private TextView mTVpointsFriend;
+
     private Button mButton_connect;
 
     private TextView mTVYou;
@@ -50,6 +55,9 @@ public class AgainstActivity extends BoardActivity {
     public boolean hangingFriend = false;
     public boolean pullupFriend = false;
 
+    public int points;
+    public boolean finished;
+
     public boolean rightGrabbedFriend = false;
     public boolean leftGrabbedFriend = false;
     public int rightGrabFriend = 0;
@@ -58,6 +66,7 @@ public class AgainstActivity extends BoardActivity {
     public int leftFingerFriend = 0;
     public int pullupsFriend = 0;
     public long hangtimeFriend = 0;
+    public boolean init = false;
 
     public boolean incPullUpsFriend = true;
     public boolean incHangtimeFriend = true;
@@ -76,20 +85,21 @@ public class AgainstActivity extends BoardActivity {
 
     public long time = 0;
 
-    public Task task;
+
+    private String username;
+    private Integer pointsFriend;
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
         ConnectBtActivity.bluetoothChatFragment.setReceiver(this);
-        setContentView(R.layout.activity_coop);
         connection = XmppService.getConnection();
         XmppService.setupAndConnect(AgainstActivity.this, Util.SERVER, "", getIntent().getStringExtra("user_id"), Util.XMPP_PASSWORD);
 
-        setContentView(R.layout.activity_coop);
+        setContentView(R.layout.activity_against);
 
         hangtimeHandlerFriend = new Handler();
         runnableFriend = new Runnable() {
@@ -101,7 +111,7 @@ public class AgainstActivity extends BoardActivity {
                     } else {
                         hangtimeFriend = hangtimeFriend - 100;
                     }
-                    onHangtimeChangeFriend();
+
                     hangtimeHandlerFriend.postDelayed(runnableFriend, 100);
                 }
             }
@@ -119,35 +129,40 @@ public class AgainstActivity extends BoardActivity {
             }
         };
 
-        recieve_chat=new BroadcastReceiver() {
+        recieve_chat = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-            String msg = intent.getStringExtra("message");
-            if (msg != null) {
-                decodeMsgFriend(msg);
-            }
+                String msg = intent.getStringExtra("message");
+                if (msg != null) {
+                    decodeMsgFriend(msg);
+                }
             }
         };
 
         LocalBroadcastManager.getInstance(this).registerReceiver(recieve_chat, new IntentFilter("message_recieved"));
 
 
-
-        mIVpullupHighlightFriend = (ImageView) findViewById(R.id.highlight_pullup_friend);
-        mIVrightHighlightFriend = (ImageView) findViewById(R.id.highlight_right_friend);
-        mIVleftHighlightFriend = (ImageView) findViewById(R.id.highlight_left_friend);
-        mIVhangboardFriend = (ImageView) findViewById(R.id.hangboard_friend);
-
+        //mIVpullupHighlightFriend = (ImageView) findViewById(R.id.highlight_pullup_friend);
+        //  mIVrightHighlightFriend = (ImageView) findViewById(R.id.highlight_right_friend);
+        // mIVleftHighlightFriend = (ImageView) findViewById(R.id.highlight_left_friend);
+        // mIVhangboardFriend = (ImageView) findViewById(R.id.hangboard_friend);
+        mTVhangtime = (TextView) findViewById(R.id.textView_hangtime);
+        mTVpullups = (TextView) findViewById(R.id.textView_pullup);
+        mTVpointsYou = (TextView) findViewById(R.id.textView_points);
+        mTVpointsFriend = (TextView) findViewById(R.id.textView_points_friend);
+        ;
+        username = getIntent().getStringExtra("user_id");
         mButton_connect = (Button) findViewById(R.id.button_con);
         mButton_connect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mETuser.getText().equals("")){
-                    task.start();
-                    XmppService.sendMessage(AgainstActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "70");
+                if (!mETuser.getText().equals("")) {
+                    XmppService.sendMessage(AgainstActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "70;" + username);
+
                 }
             }
         });
+
 
         mIVpullupHighlightYou = (ImageView) findViewById(R.id.highlight_pullup_you);
         mIVrightHighlightYou = (ImageView) findViewById(R.id.highlight_right_you);
@@ -155,13 +170,12 @@ public class AgainstActivity extends BoardActivity {
         mIVhangboardYou = (ImageView) findViewById(R.id.hangboard_you);
 
         mTVYou = (TextView) findViewById(R.id.textView_you);
-        mTVFriend = (TextView) findViewById(R.id.textView_friend);
+        // mTVFriend = (TextView) findViewById(R.id.textView_friend);
         mTVtask = (TextView) findViewById(R.id.textView_task);
         mTVtaskcontent = (TextView) findViewById(R.id.textView_taskcontent);
         mTVtime = (TextView) findViewById(R.id.textView_time);
-        mETuser=(EditText)findViewById(R.id.editText_Friend);
-        task = new Task();
-        task.setTask();
+        mETuser = (EditText) findViewById(R.id.editText_Friend);
+
 
 
     }
@@ -180,7 +194,6 @@ public class AgainstActivity extends BoardActivity {
     }
 
     private void onTimeChange() {
-        task.onTimeChange(time);
         mTVtime.setText(String.valueOf((float) (time / 100) / 10) + "s");
     }
 
@@ -208,17 +221,45 @@ public class AgainstActivity extends BoardActivity {
 
     @Override
     public void onHangtimeChange() {
+        if (getHangtime() % 2000 == 0) {
+            int pnts = 0;
+            if (rightGrab == leftGrab) {
+                if (rightGrab == 1) {
+                    pnts = 14;
+                } else {
+                    pnts = 10;
+                }
+            } else {
+                pnts = 12;
+            }
+
+
+            setPoints(points + pnts);
+
+        }
+        mTVhangtime.setText(String.valueOf((float) (super.getHangtime() / 100) / 10) + "s");
     }
 
+    public void setPoints(int points) {
+        if (!finished) {
+            this.points = points;
+            mTVpointsYou.setText(String.valueOf(points));
+            XmppService.sendMessage(AgainstActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "55;" + String.valueOf(this.points));
+        }
+    }
 
     @Override
     public void setHanging(boolean val) {
-        if (val && isRightGrabbed() && isLeftGrabbed()) {
+        if (val && isRightGrabbed() && isLeftGrabbed() && !finished) {
             super.hanging = true;
+            setHangtime(0);
             startHangtime();
         } else {
             super.hanging = false;
             stopHangtime();
+            if (hangtime > 0) {
+                finished = true;
+            }
         }
     }
 
@@ -227,7 +268,7 @@ public class AgainstActivity extends BoardActivity {
         if (val) {
             pullup = true;
             mIVpullupHighlightYou.setVisibility(View.VISIBLE);
-            mIVpullupHighlightYou.setY((float)(mIVhangboardYou.getY()+mIVhangboardYou.getHeight()*0.22));
+            mIVpullupHighlightYou.setY((float) (mIVhangboardYou.getY() + mIVhangboardYou.getHeight() * 0.22));
         } else {
             pullup = false;
             mIVpullupHighlightYou.setVisibility(View.INVISIBLE);
@@ -250,10 +291,10 @@ public class AgainstActivity extends BoardActivity {
         int left = mIVhangboardYou.getLeft();
         int top = mIVhangboardYou.getTop();
         mIVrightHighlightYou.setVisibility(View.VISIBLE);
-        float offSetRight1=(float)( mIVhangboardYou.getWidth()*0.55);
-        float offSetRight2=(float) (mIVhangboardYou.getWidth()*0.77);
-        float offSetRight3=(float)( mIVhangboardYou.getWidth()*0.7);
-        float offSetTop=(float)(mIVhangboardYou.getHeight()*0.6);
+        float offSetRight1 = (float) (mIVhangboardYou.getWidth() * 0.55);
+        float offSetRight2 = (float) (mIVhangboardYou.getWidth() * 0.77);
+        float offSetRight3 = (float) (mIVhangboardYou.getWidth() * 0.7);
+        float offSetTop = (float) (mIVhangboardYou.getHeight() * 0.6);
         switch (hold) {
             case 0:
                 mIVrightHighlightYou.setVisibility(View.INVISIBLE);
@@ -264,10 +305,10 @@ public class AgainstActivity extends BoardActivity {
                 break;
             case 2:
                 mIVrightHighlightYou.setX(left + offSetRight2);
-                mIVrightHighlightYou.setY(top +offSetTop);
+                mIVrightHighlightYou.setY(top + offSetTop);
                 break;
             case 3:
-                mIVrightHighlightYou.setX(left +offSetRight3);
+                mIVrightHighlightYou.setX(left + offSetRight3);
                 mIVrightHighlightYou.setY(top + 100);
                 break;
         }
@@ -279,10 +320,10 @@ public class AgainstActivity extends BoardActivity {
         int left = mIVhangboardYou.getLeft();
         int top = mIVhangboardYou.getTop();
         mIVleftHighlightYou.setVisibility(View.VISIBLE);
-        float offSetLeft1=(float)(mIVhangboardYou.getWidth()*0.3);
-        float offSetLeft2=(float)(mIVhangboardYou.getWidth()*0.1);
-        float offSetLeft3=(float)(mIVhangboardYou.getWidth()*0.2);
-        float offSetTop=(float)(mIVhangboardYou.getHeight()*0.6);
+        float offSetLeft1 = (float) (mIVhangboardYou.getWidth() * 0.3);
+        float offSetLeft2 = (float) (mIVhangboardYou.getWidth() * 0.1);
+        float offSetLeft3 = (float) (mIVhangboardYou.getWidth() * 0.2);
+        float offSetTop = (float) (mIVhangboardYou.getHeight() * 0.6);
         switch (hold) {
             case 0:
                 mIVleftHighlightYou.setVisibility(View.INVISIBLE);
@@ -293,12 +334,12 @@ public class AgainstActivity extends BoardActivity {
 
                 break;
             case 2:
-                mIVleftHighlightYou.setX(left +offSetLeft2);
-                mIVleftHighlightYou.setY(top +offSetTop);
+                mIVleftHighlightYou.setX(left + offSetLeft2);
+                mIVleftHighlightYou.setY(top + offSetTop);
                 break;
             case 3:
-                mIVleftHighlightYou.setX(left +offSetLeft3);
-                mIVleftHighlightYou.setY(top +offSetTop);
+                mIVleftHighlightYou.setX(left + offSetLeft3);
+                mIVleftHighlightYou.setY(top + offSetTop);
                 break;
         }
     }
@@ -315,8 +356,11 @@ public class AgainstActivity extends BoardActivity {
 
     @Override
     public void setPullups(int pulls) {
-        pullups = pulls;
-        task.pullupChange(pulls);
+        if (!finished) {
+            pullups = pulls;
+            mTVpullups.setText(String.valueOf(pulls));
+        }
+
     }
 
     @Override
@@ -329,6 +373,20 @@ public class AgainstActivity extends BoardActivity {
         if (!hanging || (holdRestrict && (rightGrab != neededRightHold || leftGrab != neededLeftHold))) {
             return;
         }
+        int pnts;
+        if (rightGrab == leftGrab) {
+            if (rightGrab == 1) {
+                pnts = 14;
+            } else {
+                pnts = 10;
+            }
+        } else {
+            pnts = 12;
+        }
+
+
+        setPoints(points + pnts);
+
         if (incPullUps) {
             setPullups(pullups + 1);
         } else {
@@ -339,282 +397,59 @@ public class AgainstActivity extends BoardActivity {
     //-------------------------------------Friend
 
     public void decodeMsgFriend(String buf) {
-        int code = Integer.valueOf(buf);
+        String[] array = buf.split(";");
+        int code = Integer.valueOf(array[0]);
         if (code > 200) {
-            setRightGrabbedFriend(true);
-            setRightGrabFriend((code - 200) / 10);
-            setRightFingerFriend(code % 10);
-            setHangingFriend(true);
-            setPullupsFriend(0);
-            return;
+            //chill
         }
         if (code == 200) {
-            setRightGrabbedFriend(false);
-            setRightGrabFriend(0);
-            setRightFingerFriend(0);
-            setHangingFriend(false);
-            setPullupFriend(false);
-            return;
+            //chill
         }
         if (code > 100) {
-            setLeftGrabbedFriend(true);
-            setLeftGrabFriend((code - 100) / 10);
-            setLeftFingerFriend(code % 10);
-            setHangingFriend(true);
-            setPullupsFriend(0);
-            return;
+            //chill
         }
         if (code == 100) {
-            setLeftGrabbedFriend(false);
-            setLeftGrabFriend(0);
-            setLeftFingerFriend(0);
-            setHangingFriend(false);
-            setPullupFriend(false);
-            return;
+            //chill
         }
         if (code == 92) {
-            setPullupFriend(false);
-            return;
+            //chill
         }
         if (code == 91) {
-            setPullupFriend(true);
-            return;
+            //chill
         }
         if (code == 90) {
-            setPullupFriend(false);
-            stepPullUpsFriend();
-            return;
+            //chill
         }
         if (code == 80) {
-            task.onCompletedFriend();
+            //chill
         }
         if (code == 70) {
-            task.start();
-        }
-    }
-
-    public void onHangtimeChangeFriend() {
-    }
-
-    public void setHangingFriend(boolean val) {
-        if (val && rightGrabbedFriend && leftGrabbedFriend) {
-            super.hanging = true;
-            startHangtimeFriend();
-        } else {
-            super.hanging = false;
-            stopHangtimeFriend();
-        }
-    }
-
-    private void stopHangtimeFriend() {
-        stopFriend = false;
-    }
-
-    private void startHangtimeFriend() {
-        stopFriend = false;
-        hangtimeHandlerFriend.post(runnableFriend);
-    }
-
-    public void setPullupFriend(boolean val) {
-        if (val) {
-            pullupFriend = true;
-            mIVpullupHighlightFriend.setVisibility(View.VISIBLE);
-            mIVpullupHighlightFriend.setY((float)(mIVhangboardFriend.getY()+mIVhangboardFriend.getHeight()*0.22));
-        } else {
-            pullupFriend = false;
-            mIVpullupHighlightFriend.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    public void setRightGrabbedFriend(boolean grab) {
-        rightGrabbedFriend = grab;
-    }
-
-    public void setLeftGrabbedFriend(boolean grab) {
-        leftGrabbedFriend = grab;
-    }
-
-    public void setRightGrabFriend(int hold) {
-        rightGrabFriend = hold;
-        int left = mIVhangboardFriend.getLeft();
-        int top = mIVhangboardFriend.getTop();
-        mIVrightHighlightFriend.setVisibility(View.VISIBLE);
-        float offSetRight1=(float)( mIVhangboardFriend.getWidth()*0.55);
-        float offSetRight2=(float) (mIVhangboardFriend.getWidth()*0.77);
-        float offSetRight3=(float)( mIVhangboardFriend.getWidth()*0.7);
-        float offSetTop=(float)(mIVhangboardFriend.getHeight()*0.6);
-        switch (hold) {
-            case 0:
-                mIVrightHighlightFriend.setVisibility(View.INVISIBLE);
-                break;
-            case 1:
-                mIVrightHighlightFriend.setX(left+offSetRight1);
-                mIVrightHighlightFriend.setY(top + offSetTop);
-                break;
-            case 2:
-                mIVrightHighlightFriend.setX(left + offSetRight2);
-                mIVrightHighlightFriend.setY(top + offSetTop);
-                break;
-            case 3:
-                mIVrightHighlightFriend.setX(left +offSetRight3);
-                mIVrightHighlightFriend.setY(top + offSetTop);
-                break;
-        }
-    }
-
-    public void setLeftGrabFriend(int hold) {
-        leftGrabFriend = hold;
-        int left = mIVhangboardFriend.getLeft();
-        int top = mIVhangboardFriend.getTop();
-        mIVleftHighlightFriend.setVisibility(View.VISIBLE);
-        float offSetLeft1=(float)(mIVhangboardFriend.getWidth()*0.3);
-        float offSetLeft2=(float)(mIVhangboardFriend.getWidth()*0.1);
-        float offSetLeft3=(float)(mIVhangboardFriend.getWidth()*0.2);
-        float offSetTop=(float)(mIVhangboardFriend.getHeight()*0.6);
-        switch (hold) {
-            case 0:
-                mIVleftHighlightFriend.setVisibility(View.INVISIBLE);
-                break;
-            case 1:
-                mIVleftHighlightFriend.setX(left + offSetLeft1);
-                mIVleftHighlightFriend.setY(top + offSetTop);
-                break;
-            case 2:
-                mIVleftHighlightFriend.setX(left + offSetLeft2);
-                mIVleftHighlightFriend.setY(top + offSetTop);
-                break;
-            case 3:
-                mIVleftHighlightFriend.setX(left +offSetLeft3);
-                mIVleftHighlightFriend.setY(top + offSetTop);
-                break;
-        }
-    }
-
-    public void setRightFingerFriend(int finger) {
-        rightFingerFriend = finger;
-    }
-
-    public void setLeftFingerFriend(int finger) {
-        leftFingerFriend = finger;
-    }
-
-    public void setPullupsFriend(int pulls) {
-        pullupsFriend = pulls;
-        task.pullupChangeFriend(pulls);
-
-    }
-
-    public void setHangtimeFriend(long time) {
-        hangtimeFriend = time;
-    }
-
-    public void stepPullUpsFriend() {
-        if (!hangingFriend || (holdRestrictFriend && (rightGrabFriend != neededRightHoldFriend || leftGrabFriend != neededLeftHoldFriend))) {
-            return;
-        }
-        if (incPullUpsFriend) {
-            setPullups(pullupsFriend + 1);
-        } else {
-            setPullups(pullupsFriend - 1);
-        }
-    }
-
-    //-----------------------------------------Task
-
-    public class Task {
-        int i = 0;
-        long tasktime = 15000;
-        boolean lastcompleted = false;
-        boolean completed = true;
-        boolean completedFriend = true;
-
-        Runnable wait = new Runnable() {
-            @Override
-            public void run() {
-                setTask();
-                start();
-            }};
-
-        Handler waithandler = new Handler();
-
-        public void setTask() {
-            if (i == 0) {
-                mTVtask.setText("Get Ready!");
-            } else {
-                mTVtask.setText("Do " + String.valueOf(i) + " Pull Ups!");
+            if (!init) {
+                XmppService.sendMessage(AgainstActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "70;" + username);
+                init = true;
             }
-            mTVtime.setText(String.valueOf((float) (time / 100) / 10) + "s");
-            if (i != 0) {
-                completed = false;
-                completedFriend = false;
-            } else {
-                completed = true;
-                completedFriend = true;
-            }
-            setTime(tasktime);
-            setPullups(0);
-            setPullupsFriend(0);
+            mETuser.setText(array[1]);
+            mETuser.setEnabled(false);
+            mButton_connect.setEnabled(false);
         }
-
-        public void onTimeChange(long time) {
-            if ( time <= 0 ) {
-                stopTime();
-                if (!completed && !completedFriend) {
-                    if (i == 1) {
-                        mTVtask.setText("Draw!");
-                    } else {
-                        if (lastcompleted) {
-                            mTVtask.setText("You win, because you finished first in the round before!");
-                        } else {
-                            mTVtask.setText("Your Friend wins, because he finished first in the round before!");
-                        }
-                    }
-                } else {
-                    if (!completedFriend && completed) {
-                        mTVtask.setText("You win, because your friend did not finish this round!");
-                    } else {
-                        if (completedFriend && !completed) {
-                            mTVtask.setText("Your Friend wins, because you did not finish this round!");
-                        } else {
-                            i++;
-                            if (i % 5 == 0) {
-                                tasktime = tasktime + 7000;
-                            } else {
-                                tasktime = tasktime + 5000;
-                            }
-                            waithandler.postDelayed(wait, 200);
-                        }
-                    }
-                }
-            }
+        if (code == 60) {
+            //chill
         }
-
-        public void pullupChange(int pulls) {
-            if (pulls >= i) {
-                completed = true;
-                if (completedFriend) {
-                    lastcompleted = false;
-                }
-                XmppService.sendMessage(AgainstActivity.this, mETuser.getText() + Util.SUFFIX_CHAT, Message.Type.chat, "80");
-            } else {
-                //mTVtask.setText("Do " + String.valueOf(i - pulls) + " Pull Ups!");
-            }
-            mTVtaskcontent.setText(String.valueOf(pulls));
+        if (code == 55) {
+            pointsFriend = Integer.valueOf(array[1]);
+            mTVpointsFriend.setText(array[1]);
         }
-
-        public void pullupChangeFriend(int pulls) {
-
-        }
-
-        public void onCompletedFriend() {
-            completedFriend = true;
-            if (completed) {
-                lastcompleted = true;
-            }
-        }
-
-        public void start(){
-            startTime();
+        if (code == 50) {
+            //chill
         }
     }
-}
+
+
+
+
+
+
+    }
+
+
+
